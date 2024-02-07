@@ -1,0 +1,7 @@
+fn Factorial(num: u64): u64 {
+  if num == 0 || num == 1 {
+    return 1;
+  } else {
+    return num * Factorial(num - 1);
+  }
+}

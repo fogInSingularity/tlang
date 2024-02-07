@@ -1,0 +1,32 @@
+import std;
+
+import solve_square;
+import user_int;
+//import statemnet ^
+
+//enum
+enum NRoots: {
+  kInf  = -1,
+  kZero =  0,
+  kOne  =  1,
+  kTwo  =  2,
+};
+
+//function
+fn Main() {
+  //variable decl
+  let mut a: f64 = 0.0;
+  let mut b: f64 = 0.0;
+  let mut c: f64 = 0.0;
+  let mut str: char[] = "hello";
+  let mut ch: char = '0';
+
+  //function call
+  InputCoeff(&a, &b, &c);
+
+  let mut x1: f64 = 0.0;
+  let mut x2: f64 = 0.0;
+  let n_roots: NRoots = SolveSquare(a, b, c, &x1, &x2);
+
+  OutputSol(n_roots, x1, x2);
+}

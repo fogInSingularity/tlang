@@ -1,0 +1,24 @@
+fn Main() {
+  let fact_num: i32 = Factorial(10);
+}
+
+fn Factorial(num: i32): i32 {
+  if num == 0 || num == 1 {
+    return 1;
+  } else {
+    return num * Factorial(num - 1);
+  }
+}
+
+// types:
+//  bool
+//  u8 u16 u32 u64
+//  i8 i16 i32 i64
+//  usize isize
+//  char str?
+//  let array: [type, size] = [,];
+
+// keywords:
+//  let mut fn -> (){} | || & && !~ >> << = == != +-*/ , : ;
+//  if else while match
+//  for _ in _.._ {}

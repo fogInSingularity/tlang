@@ -1,0 +1,12 @@
+kw := _kw_
+id := l(l|d)*
+op := op
+cnst := dd*.dd* | ' '
+str_lit := " "
+punc := punc
+
+add ponters, typeof, sizeof
+
+front parsses input to tree and save it
+middle opimize tree
+back translate tree

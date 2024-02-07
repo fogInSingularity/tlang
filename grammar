@@ -1,0 +1,233 @@
++!import_statement
+  : KW_IMPORT IDENTIFIER
+  ;
+
++!enum_decl
+  : KW_ENUM IDENTIFIER PUNC_LEFT_CURL_BRACKET enum_list PUNC_RIGHT_CURL_BRACKET
+  ;
+
++enum_list
+  : enum_item PUNC_COMMA enum_list
+  | enum_item PUNC_COMMA
+  | enum_item
+  ;
+
++enum_item
+  : IDENTIFIER OP_ASSIGN const_value
+  | IDENTIFIER
+  ;
+
++const_value
+  : CONST
+  | OP_MINUS CONST
+  ;
+
+//FIXME struct
+
++func_decl
+  : KW_FN IDENTIFIER func_param PUNC_COLON type_spec statement
+  ;
+
++func_param
+  : PUNC_LEFT_ROUND_BRACKET PUNC_RIGHT_ROUND_BRACKET
+  | PUNC_LEFT_ROUND_BRACKET func_param_list PUNC_RIGHT_ROUND_BRACKET
+  ;
+
++func_param_list
+  : var_spec PUNC_COMMA func_param_list
+  | var_spec
+  ;
+
++var_spec
+  : KW_MUT var_spec_no_mut
+  |        var_spec_no_mut
+  ;
+
++var_spec_no_mut
+  : IDENTIFIER PUNC_COLON type_spec
+  ;
+
++type_spec
+  : KW_I8
+  | KW_U8
+  | KW_I16
+  | KW_U16
+  | KW_I32
+  | KW_U32
+  | KW_I64
+  | KW_U64
+  | KW_ISIZE
+  | KW_USIZE
+  | KW_BOOL
+  | KW_F32
+  | KW_F64
+  | KW_CHAR
+  | TYPE_NAME
+  ;
+
++assign_expr
+  : IDENTIFIER assign_op value_expr
+  ;
+
++var_init
+  : KW_LET var_spec OP_ASSIGN value_expr
+  | KW_LET var_spec
+  ;
+
++assign_op
+  : OP_ASSIGN
+  | OP_BIT_SHIFT_LEFT_ASSIGN
+  | OP_BIT_SHIFT_RIGHT_ASSIGN
+  | OP_PLUS_ASSIGN
+  | OP_MINUS_ASSIGN
+  | OP_MULT_ASSIGN
+  | OP_DIV_ASSIGN
+  | OP_REM_ASSIGN
+  | OP_BIT_OR_ASSIGN
+  | OP_BIT_AND_ASSIGN
+  | OP_BIT_XOR_ASSIGN
+  ;
+
++statement
+  : PUNC_LEFT_CURL_BRACKET statement_list PUNC_RIGHT_CURL_BRACKET
+  ;
+
++statement_list:
+  : single_statement PUNC_SEMICOLON statement_list
+  | single_statement PUNC_SEMICOLON
+  ;
+
++single_statement
+  : var_init
+  | assign_expr
+  | value_expr
+  ;
+
+//-----------------------------------------------------------------------------
+
++value_expr
+  : or_expr
+  ;
+
++or_expr
+  : and_expr OP_OR or_expr
+  | and_expr
+  ;
+
++and_expr
+  : bit_or_expr OP_AND and_expr
+  | bit_or_expr
+  ;
+
++bit_or_expr
+  : bit_xor_expr OP_BIT_OR bit_or_expr
+  | bit_xor_expr
+  ;
+
++bit_xor_expr
+  : bit_and_expr OP_BIT_XOR bit_xor_expr
+  | bit_and_expr
+  ;
+
++bit_and_expr
+  : equal_expr OP_BIT_AND bit_and_expr
+  | equal_expr
+  ;
+
++equal_expr
+  : order_expr OP_EQUAL equal_expr
+  | order_expr OP_NOT_EQUAL equal_expr
+  | order_expr
+  ;
+
++order_expr
+  : bit_shift_expr OP_GREATER order_expr
+  | bit_shift_expr OP_GREATER_OR_EQUAL order_expr
+  | bit_shift_expr OP_LESS order_expr
+  | bit_shift_expr OP_LESS_OR_EQUAL order_expr
+  | bit_shift_expr
+  ;
+
++bit_shift_expr
+  : plus_minus_expr OP_BIT_SHIFT_LEFT_ASSIGN bit_shift_expr
+  | plus_minus_expr OP_BIT_SHIFT_RIGHT_ASSIGN bit_shift_expr
+  | plus_minus_expr
+  ;
+
++plus_minus_expr
+  : mult_expr OP_PLUS plus_minus_expr
+  | mult_expr OP_MINUS plus_minus_expr
+  | mult_expr
+  ;
+
++mult_expr
+  : basic_expr OP_MULT mult_expr
+  | basic_expr OP_DIV mult_expr
+  | basic_expr OP_REM mult_expr
+  | basic_expr
+  ;
+
+basic_expr
+  : func_call
+  | IDENTIFIER
+  | CONST
+  | STR_LIT
+  | PUNC_LEFT_ROUND_BRACKET value_expr PUNC_RIGHT_ROUND_BRACKET
+  ;
+
+//-----------------------------------------------------------------------------
+
++func_call
+  : IDENTIFIER func_call_param
+  ;
+
++func_call_param
+  : PUNC_LEFT_ROUND_BRACKET PUNC_RIGHT_ROUND_BRACKET
+  | PUNC_LEFT_ROUND_BRACKET func_call_param_list PUNC_RIGHT_ROUND_BRACKET
+  ;
+
++func_call_param_list
+  : value_expr PUNC_COMMA func_param_list
+  | value_expr
+  ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+asm_func
+  : KW_ASM PUNC_LEFT_CURL_BRACKET STR_LIT PUNC_RIGHT_CURL_BRACKET
+  ;
+
+if_branch
+  : KW_IF PUNC_LEFT_ROUND_BRACKET value_expr PUNC_RIGHT_ROUND_BRACKET statement else_branch
+  | KW_IF PUNC_LEFT_ROUND_BRACKET value_expr PUNC_RIGHT_ROUND_BRACKET statement
+  ;
+
+else_branch
+  : KW_ELSE if_branch
+  | KW_ELSE statement
+  ;
+
+for_loop
+  : KW_FOR PUNC_LEFT_ROUND_BRACKET var_init PUNC_SEMICOLON value_expr PUNC_SEMICOLON assign_expr PUNC_RIGHT_ROUND_BRACKET statement
+  ;
+
+while_loop
+  : KW_WHILE PUNC_LEFT_ROUND_BRACKET value_expr PUNC_RIGHT_ROUND_BRACKET statement
+  ;
+
+do_while_loop
+  : KW_DO statement KW_WHILE PUNC_LEFT_ROUND_BRACKET value_expr PUNC_RIGHT_ROUND_BRACKET
+  ;
