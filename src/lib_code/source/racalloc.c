@@ -1,5 +1,11 @@
 #include "recalloc.h"
 
+#include <memory.h>
+#include <stdlib.h>
+
+#include "my_typedefs.h"
+#include "my_assert.h"
+
 void* Recalloc(void* ptr, size_t cap, size_t used_size) {
   ASSERT(ptr != NULL);
 

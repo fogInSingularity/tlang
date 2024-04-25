@@ -1,5 +1,11 @@
 #include "my_assert.h"
 
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#include "color.h"
+
 void my_assert(bool expr, const char* expr_str, const char* file, const char* func) {
   if (expr) { return; }
 

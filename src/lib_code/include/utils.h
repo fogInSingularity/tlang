@@ -4,20 +4,18 @@
 #include <stddef.h>
 #include <memory.h>
 #include <stdint.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <math.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #include "lib_config.h"
 
-#include "my_assert.h"
 #include "my_typedefs.h"
 
-#ifndef MIN
+#if defined (MIN)
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif // #ifndef MIN
-#ifndef MAX
+
+#if defined (MAX)
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #endif // #ifndef MAX
 

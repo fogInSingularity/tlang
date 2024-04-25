@@ -1,5 +1,7 @@
 #include "frontend.h"
 
+#include "file_wraper.h"
+
 //global-----------------------------------------------------------------------
 
 FrontError FrontCtor(Frontend* front,
@@ -9,11 +11,11 @@ FrontError FrontCtor(Frontend* front,
   ASSERT(source_file != NULL);
   ASSERT(target_file != NULL);
 
-  FILE* source = fopen(source_file, "r");
+  FILE* source = FOpenW(source_file, "r");
   if (source == NULL) { return kFrontError_CantOpenSourceFile; }
 
   GetData(&front->source_data, source);
-  fclose(source);
+  FCloseW(source);
 
   DArrayError darr_error = DArray_Ctor(&front->token_array, sizeof(Token), 0);
   if (darr_error != kDArrayError_Success) { return kFrontError_BadDArrayCtor; }

@@ -1,5 +1,11 @@
 #include "utils.h"
 
+#include <math.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+#include "my_assert.h"
+
 void SwapBytes(void* a, void* b, size_t size) {
   ASSERT(a != NULL);
   ASSERT(b != NULL);

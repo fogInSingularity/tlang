@@ -9,7 +9,7 @@
 
 #define USE_VAR(var) (void)var;
 
-#ifdef DEBUG_ON
+#if defined (DEBUG)
 #define PRINT_BYTE(n)    (void)fprintf(stderr, "[line: %d, type: byte] %s %x\n", __LINE__, #n, n);
 #define PRINT_INT(n)     (void)fprintf(stderr, "[line: %d, type: int] %s %d\n", __LINE__, #n, n);
 #define PRINT_UINT(n)    (void)fprintf(stderr, "[line: %d, type: uint] %s %u\n", __LINE__, #n, n);
@@ -30,7 +30,7 @@
 #define PRINT_ULX(n)    ;
 #define PRINT_DOUBLE(n) ;
 #define PRINT_FLOAT(n)  ;
-#endif // DEBUG_ON
+#endif // DEBUG
 
 #ifdef SINGLE_DOLLAR_ON
 #define $         (void)fprintf(stderr, BOLD MAGENTA ">>> %s(%d) %s\n"  RESET,\

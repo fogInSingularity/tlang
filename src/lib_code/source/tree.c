@@ -1,5 +1,11 @@
 #include "tree.h"
 
+#include <stdlib.h>
+#include <memory.h>
+
+#include "my_assert.h"
+#include "file_wraper.h"
+
 //static-----------------------------------------------------------------------
 
 static void TreeDumpNode(const TreeNode* node,
@@ -24,7 +30,7 @@ void TreeDtor(Tree* tree) {
 }
 
 void TreeDotDump(const Tree* tree, DumpTreeNodeFunc* DumpNode) {
-  FILE* dump_file = fopen("dump_tree.dot", "w");
+  FILE* dump_file = FOpenW("dump_tree.dot", "w");
   if (dump_file == NULL) { return; }
 
   fprintf(dump_file, "digraph {\n");
@@ -33,7 +39,7 @@ void TreeDotDump(const Tree* tree, DumpTreeNodeFunc* DumpNode) {
   TreeDumpNode(tree->root.r_child, dump_file, DumpNode);
   fprintf(dump_file, "}\n");
 
-  fclose(dump_file);
+  FCloseW(dump_file);
 }
 
 TreeNode* TreeCtorNode(TreeElem* data, TreeNode* parent) {
