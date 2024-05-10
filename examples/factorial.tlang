@@ -1,5 +1,9 @@
-fn Factorial(num: u64): u64 {
-  if num == 0 || num == 1 {
+fn Main(): i64 {
+  let fact_num: i64 = Factorial(10);
+}
+
+fn Factorial(num: i64): i64 {
+  if (num == 0 || num == 1) {
     return 1;
   } else {
     return num * Factorial(num - 1);

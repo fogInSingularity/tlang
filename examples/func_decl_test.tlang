@@ -1,4 +1,0 @@
-fn test(): u8 {
-    let var: i32 = func(1, 2, 3, 4);
-}
-
