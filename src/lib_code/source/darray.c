@@ -1,5 +1,7 @@
 #include "darray.h"
 
+#include "alloc_wraper.h"
+
 //static-----------------------------------------------------------------------
 
 static const size_t kDArray_StandartAllocSize = 8;
@@ -23,7 +25,7 @@ DArrayError DArray_Ctor(DArray* darr, size_t elem_size, size_t init_cap) {
   init_cap =   kDArray_StandartAllocSize > init_cap
              ? kDArray_StandartAllocSize : init_cap;
 
-  darr->array = calloc(init_cap, elem_size);
+  darr->array = CALLOCW(init_cap, elem_size);
   if (darr->array == NULL) { return kDArrayError_CtorCantAlloc; }
 
   darr->n_elem = 0;
@@ -36,7 +38,7 @@ DArrayError DArray_Ctor(DArray* darr, size_t elem_size, size_t init_cap) {
 void DArray_Dtor(DArray* darr) {
   ASSERT(darr != NULL);
 
-  free(darr->array);
+  FREEW(darr->array);
   darr->array = NULL;
 
   darr->n_elem = 0;

@@ -3,15 +3,12 @@
 
 #include <stdbool.h>
 
-#include "my_assert.h"
-#include "my_typedefs.h"
-#include "debug.h"
 #include "darray.h"
 #include "bin_file.h"
-#include "lexer.h"
-#include "ast_builder.h"
+#include "tree.h"
 
 typedef struct Frontend {
+  bool is_valid;
   BinData source_data;
   DArray token_array;
   Tree ast;

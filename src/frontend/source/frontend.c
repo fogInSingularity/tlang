@@ -1,6 +1,12 @@
 #include "frontend.h"
 
 #include "file_wraper.h"
+#include "my_assert.h"
+#include "my_typedefs.h"
+#include "debug.h"
+#include "ast_builder.h"
+#include "lexer.h"
+#include "tree.h"
 
 //global-----------------------------------------------------------------------
 
@@ -11,16 +17,20 @@ FrontError FrontCtor(Frontend* front,
   ASSERT(source_file != NULL);
   ASSERT(target_file != NULL);
 
-  FILE* source = FOpenW(source_file, "r");
+  front->is_valid = false;
+
+  FILE* source = FOPENW(source_file, "r");
   if (source == NULL) { return kFrontError_CantOpenSourceFile; }
 
   GetData(&front->source_data, source);
-  FCloseW(source);
+  FCLOSEW(source);
 
   DArrayError darr_error = DArray_Ctor(&front->token_array, sizeof(Token), 0);
   if (darr_error != kDArrayError_Success) { return kFrontError_BadDArrayCtor; }
 
-  //FIXME tree ctor
+  TreeCtor(&front->ast);
+
+  front->is_valid = true;
 
   return kFrontError_Success;
 }
@@ -31,6 +41,8 @@ void FrontDtor(Frontend* front) {
   FreeData(&front->source_data);
   DArray_Dtor(&front->token_array);
   TreeDtor(&front->ast);
+
+  front->is_valid = false;
 }
 
 FrontError FrontPass(Frontend* front) {
@@ -40,6 +52,7 @@ FrontError FrontPass(Frontend* front) {
   if (lex_error != kLexicalError_Success) { return kFrontError_BadLexAnalyse; }
 
   AstError ast_error = AstBuilder(&front->token_array, &front->ast);
+  
 
   return kFrontError_Success;
 }

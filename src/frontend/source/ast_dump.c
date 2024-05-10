@@ -1,5 +1,7 @@
 #include "ast_dump.h"
 
+#define STRINGIFY(to_str) #to_str
+
 void DumpAst(const TreeNode* node, FILE* dump_file) {
   ASSERT(dump_file != NULL);
 
@@ -93,6 +95,66 @@ void DumpAst(const TreeNode* node, FILE* dump_file) {
               (size_t)node);
       Putns(dump_file, node->data.str_lit.str, node->data.str_lit.len);
       fprintf(dump_file, " \"];\n");
+      break;
+    //----------------------------------------------------------
+    case kTokenType_TreeSup:
+      const char* tree_sup_option = NULL;
+      switch (node->data.tree_sup) {
+        case kTreeSup_Uninit:
+          tree_sup_option = STRINGIFY(kTreeSup_Uninit);
+          break;
+        case kTreeSup_VarSpec:
+          tree_sup_option = STRINGIFY(kTreeSup_VarSpec);
+          break;
+        case kTreeSup_VarInit:
+          tree_sup_option = STRINGIFY(kTreeSup_VarInit);
+          break;
+        case kTreeSup_AssignExpr:
+          tree_sup_option = STRINGIFY(kTreeSup_AssignExpr);
+          break;
+        case kTreeSup_IfBranch:
+          tree_sup_option = STRINGIFY(kTreeSup_IfBranch);
+          break;
+        case kTreeSup_ElseIfBranch:
+          tree_sup_option = STRINGIFY(kTreeSup_ElseIfBranch);
+          break;
+        case kTreeSup_ElseStBranch:
+          tree_sup_option = STRINGIFY(kTreeSup_ElseStBranch);
+          break;
+        case kTreeSup_WhileLoop:
+          tree_sup_option = STRINGIFY(kTreeSup_WhileLoop);
+          break;
+        case kTreeSup_ValueExpr:
+          tree_sup_option = STRINGIFY(kTreeSup_ValueExpr);
+          break;
+        case kTreeSup_Statement:
+          tree_sup_option = STRINGIFY(kTreeSup_Statement);
+          break;
+        case kTreeSup_FunctionDef:
+          tree_sup_option = STRINGIFY(kTreeSup_FunctionDef);
+          break;
+        case kTreeSup_ConnectIfElse:
+          tree_sup_option = STRINGIFY(kTreeSup_ConnectIfElse);
+          break;
+        case kTreeSup_FunctionCall:
+          tree_sup_option = STRINGIFY(kTreeSup_FunctionCall);
+          break;
+        case kTreeSup_FunctionNoParam:
+          tree_sup_option = STRINGIFY(kTreeSup_FunctionNoParam);
+          break;
+        case kTreeSup_FunctionParamList:
+          tree_sup_option = STRINGIFY(kTreeSup_FunctionParamList);
+          break;
+        case kTreeSup_ReturnExpr:
+          tree_sup_option = STRINGIFY(kTreeSup_ReturnExpr);
+          break;
+        default:
+          PRINT_INT(node->data.tree_sup);
+          ASSERT(0 && ":(");
+      }
+      fprintf(dump_file,
+              "node_%lu [shape = box, style = filled, fillcolor = \"#d9edbf\", label = \" type: tree_sup | %s\"];\n",
+              (size_t)node, tree_sup_option); //FIXME add more info about tree_sup
       break;
     //----------------------------------------------------------
     case kTokenType_Uninit:

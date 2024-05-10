@@ -1,5 +1,7 @@
 #include "bin_file.h"
 
+#include "alloc_wraper.h"
+
 //static-----------------------------------------------------------------------
 
 static size_t FileSize(FILE* file);
@@ -13,7 +15,7 @@ void GetData(BinData* data, FILE* file) {
 
   data->buf_size = FileSize(file);
 
-  data->buf = (char*)calloc(data->buf_size + 1, sizeof(char));
+  data->buf = (char*)CALLOCW(data->buf_size + 1, sizeof(char));
 
   FileRead(data, file);
 }
@@ -21,7 +23,7 @@ void GetData(BinData* data, FILE* file) {
 void FreeData(BinData* data) {
   ASSERT(data != NULL);
 
-  free(data->buf);
+  FREEW(data->buf);
   data->buf= NULL;
 
   data->buf_size = 0;
@@ -33,7 +35,9 @@ void FileRead(BinData* data, FILE* file) {
   ASSERT(data != NULL);
   ASSERT(file != NULL);
 
-  fread(data->buf, sizeof(char), data->buf_size, file);
+  size_t data_read = fread(data->buf, sizeof(char), data->buf_size, file);
+  ASSERT(data_read == data->buf_size);
+
   data->buf[data->buf_size] = '\0';
 }
 

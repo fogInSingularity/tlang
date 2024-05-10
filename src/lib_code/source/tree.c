@@ -5,6 +5,7 @@
 
 #include "my_assert.h"
 #include "file_wraper.h"
+#include "alloc_wraper.h"
 
 //static-----------------------------------------------------------------------
 
@@ -30,23 +31,23 @@ void TreeDtor(Tree* tree) {
 }
 
 void TreeDotDump(const Tree* tree, DumpTreeNodeFunc* DumpNode) {
-  FILE* dump_file = FOpenW("dump_tree.dot", "w");
+  FILE* dump_file = FOPENW("dump_tree.dot", "w");
   if (dump_file == NULL) { return; }
 
   fprintf(dump_file, "digraph {\n");
   // fprintf(dump_file, "rankdir=LR\n");
-  TreeDumpNode(tree->root.l_child, dump_file, DumpNode);
+  // TreeDumpNode(tree->root.l_child, dump_file, DumpNode);
   TreeDumpNode(tree->root.r_child, dump_file, DumpNode);
   fprintf(dump_file, "}\n");
 
-  FCloseW(dump_file);
+  FCLOSEW(dump_file);
 }
 
 TreeNode* TreeCtorNode(TreeElem* data, TreeNode* parent) {
   ASSERT(data != NULL);
   // ASSERT(parent != NULL);
 
-  TreeNode* new_node = (TreeNode*)calloc(1, sizeof(TreeNode));
+  TreeNode* new_node = (TreeNode*)CALLOCW(1, sizeof(TreeNode));
   if (new_node == NULL) { return NULL; }
 
   memcpy(&new_node->data, data, sizeof(TreeElem));
@@ -63,7 +64,7 @@ Counter TreeDtorNode(TreeNode* node) {
 
   cnt += TreeDtorNode(node->l_child);
   cnt += TreeDtorNode(node->r_child);
-  free(node);
+  FREEW(node);
 
   return cnt + 1;
 }

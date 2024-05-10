@@ -12,6 +12,7 @@ typedef enum TokenType {
   kTokenType_StringLit   = 4,
   kTokenType_Operator    = 5,
   kTokenType_Punctuation = 6,
+  kTokenType_TreeSup     = 7
 } TokenType;
 
 typedef enum ConstType {
@@ -24,9 +25,9 @@ typedef enum ConstType {
 typedef struct ConstValue {
   ConstType type;
   union {
-    double dble_cnst;
+    double  dble_cnst;
     ssize_t int_cnst;
-    char char_cnst;
+    char    char_cnst;
   };
 } ConstValue;
 
@@ -65,17 +66,38 @@ typedef enum Punctuation {
 #undef PUNCTUATION
 } Punctuation;
 
+typedef enum TreeSup {
+  kTreeSup_Uninit            = 0,
+
+  kTreeSup_VarSpec           = 1,
+  kTreeSup_VarInit           = 2,
+  kTreeSup_AssignExpr        = 3,
+  kTreeSup_IfBranch          = 4,
+  kTreeSup_ElseStBranch      = 5,
+  kTreeSup_ElseIfBranch      = 6,
+  kTreeSup_WhileLoop         = 7,
+  kTreeSup_ValueExpr         = 8,
+  kTreeSup_Statement         = 9,
+  kTreeSup_ConnectIfElse     = 10,
+  kTreeSup_FunctionCall      = 11,
+  kTreeSup_FunctionDef       = 12,
+  kTreeSup_FunctionNoParam   = 13,
+  kTreeSup_FunctionParamList = 14,
+  kTreeSup_ReturnExpr        = 15,
+} TreeSup;
+
 typedef struct Token {
   TokenType type;
-    KeyWord key_word;
-  union {
-    Identifier idnt;
-    ConstValue cnst;
-    StringLit str_lit;
-    Operator op;
-    Punctuation punc;
-  };
   DebugInfo debug;
+  union {
+    KeyWord     key_word;
+    Identifier  idnt;
+    ConstValue  cnst;
+    StringLit   str_lit;
+    Operator    op;
+    Punctuation punc;
+    TreeSup     tree_sup;
+  };
 } Token;
 
 #endif // TOKENDEF_H_

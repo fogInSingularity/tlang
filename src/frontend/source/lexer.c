@@ -1,6 +1,11 @@
 #include "lexer.h"
 
-//static-----------------------------------------------------------------------
+#include <ctype.h>
+
+#include "token_def.h"
+#include "utils.h"
+
+// static ----------------------------------------------------------------------
 
 static const ErrorIndex kTokenise_Success = -1;
 static const ErrorIndex kRemComms_Failure = -1;
@@ -32,7 +37,7 @@ static TokenState TokenPunctuation(BinData* data, DArray* token_array,
 static Counter SkipSpaces(BinData* data, Counter* shift, DebugInfo* debug);
 void ArrDump(const void* elem);
 
-//global-----------------------------------------------------------------------
+// global ----------------------------------------------------------------------
 
 LexicalError Lexer(BinData* data, DArray* token_array) {
   ASSERT(data != NULL);
@@ -50,7 +55,7 @@ LexicalError Lexer(BinData* data, DArray* token_array) {
   return kLexicalError_Success;
 }
 
-//static-----------------------------------------------------------------------
+// static ----------------------------------------------------------------------
 
 static ErrorCounter RemoveComments(BinData* data) {
   ASSERT(data != NULL);
@@ -137,14 +142,14 @@ static ErrorIndex Tokenise(BinData* data, DArray* token_array) {
     // PRINT_CHAR(*(data->buf + shift));
     // PRINT_ULONG(data->buf_size - shift);
   }
-
-  DArray_Dump(token_array, ArrDump);
+//FIXME
+  // DArray_Dump(token_array, ArrDump);
 
   return kTokenise_Success;
 }
 
 static TokenState TokenKeyword(BinData* data, DArray* token_array,
-                               Counter* shift, DebugInfo* debug) {$$$
+                               Counter* shift, DebugInfo* debug) {
   ASSERT(data != NULL);
   ASSERT(token_array != NULL);
   ASSERT(shift != NULL);
@@ -174,7 +179,7 @@ static TokenState TokenKeyword(BinData* data, DArray* token_array,
 }
 
 static TokenState TokenIdentifier(BinData* data, DArray* token_array,
-                                  Counter* shift, DebugInfo* debug) {$$$
+                                  Counter* shift, DebugInfo* debug) {
   ASSERT(data != NULL);
   ASSERT(token_array != NULL);
   ASSERT(shift != NULL);
@@ -203,7 +208,7 @@ static TokenState TokenIdentifier(BinData* data, DArray* token_array,
 }
 
 static TokenState TokenOperator(BinData* data, DArray* token_array,
-                                Counter* shift, DebugInfo* debug) {$$$
+                                Counter* shift, DebugInfo* debug) {
   ASSERT(data != NULL);
   ASSERT(token_array != NULL);
   ASSERT(shift != NULL);
@@ -234,7 +239,7 @@ static TokenState TokenOperator(BinData* data, DArray* token_array,
 
 //FIXME
 static TokenState TokenConst(BinData* data, DArray* token_array,
-                             Counter* shift, DebugInfo* debug) {$$$
+                             Counter* shift, DebugInfo* debug) {
   ASSERT(data != NULL);
   ASSERT(token_array != NULL);
   ASSERT(shift != NULL);
@@ -366,7 +371,7 @@ static TokenState TokenConstNum(BinData* data, DArray* token_array,
 }
 
 static TokenState TokenStrLit(BinData* data, DArray* token_array,
-                              Counter* shift, DebugInfo* debug) {$$$
+                              Counter* shift, DebugInfo* debug) {
   ASSERT(data != NULL);
   ASSERT(token_array != NULL);
   ASSERT(shift != NULL);
@@ -406,7 +411,7 @@ static TokenState TokenStrLit(BinData* data, DArray* token_array,
 }
 
 static TokenState TokenPunctuation(BinData* data, DArray* token_array,
-                                   Counter* shift, DebugInfo* debug) {$$$
+                                   Counter* shift, DebugInfo* debug) {
   ASSERT(data != NULL);
   ASSERT(token_array != NULL);
   ASSERT(shift != NULL);
@@ -437,7 +442,7 @@ static TokenState TokenPunctuation(BinData* data, DArray* token_array,
 
 static Counter SkipSpaces(BinData* data,
                           Counter* shift,
-                          DebugInfo* debug) {$$$
+                          DebugInfo* debug) {
   ASSERT(data != NULL);
   ASSERT(shift != NULL);
   ASSERT(debug != NULL);

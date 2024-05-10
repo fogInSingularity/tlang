@@ -61,4 +61,14 @@
 #define $$$ ;
 #endif // TRIPLE_DOLLAR_ON
 
+#if defined (QUAD_DOLLAR_ON)
+#define $$$$       (void)fprintf(stderr,                                       \
+                                BOLD RED "{ %s }{ %d }{ %s }\n" RESET,     \
+                                __PRETTY_FUNCTION__,                          \
+                                __LINE__,                                     \
+                                __FILE__);
+#else
+#define $$$$ ;
+#endif // QUAD_DOLLAR_ON
+
 #endif // LIB_DEBUG_H_

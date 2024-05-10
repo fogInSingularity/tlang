@@ -7,8 +7,8 @@
 #include "lib_config.h"
 
 #if defined(DEBUG)
-// #define ASSERT(expr) my_assert(expr, #expr, __FILE__, __PRETTY_FUNCTION__);
-#define ASSERT(expr) assert(expr);
+#define ASSERT(expr) my_assert(expr, #expr, __FILE__, __PRETTY_FUNCTION__);
+// #define ASSERT(expr) assert(expr);
 #else
 #define ASSERT(expr) ;
 #endif
