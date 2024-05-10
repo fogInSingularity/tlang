@@ -10,3 +10,6 @@ add ponters, typeof, sizeof
 front parsses input to tree and save it
 middle opimize tree
 back translate tree
+
+left = blue
+right = red
