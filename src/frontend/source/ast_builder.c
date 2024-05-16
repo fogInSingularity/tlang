@@ -227,30 +227,30 @@ static TreeNode* GetFuncDefParamList(DArray* token_arr, Index* token_index) {
 
   if (var_spec_nd == NULL) {
     return NULL;
+  }
+
+  CreateTokenNoNULLCheck_(punc_comma_tkn, token_arr, local_index);
+  if (punc_comma_tkn == NULL) {
+    *token_index = local_index;
+    return var_spec_nd;
+  } else if (punc_comma_tkn->type != kTokenType_Punctuation
+              || punc_comma_tkn->punc != PUNC_COMMA) {
+    *token_index = local_index;
+    return var_spec_nd;
   } else {
-    CreateTokenNoNULLCheck_(punc_comma_tkn, token_arr, local_index);
-    if (punc_comma_tkn == NULL) {
-      *token_index = local_index;
-      return var_spec_nd;
-    } else if (punc_comma_tkn->type != kTokenType_Punctuation
-               || punc_comma_tkn->punc != PUNC_COMMA) {
-      *token_index = local_index;
-      return var_spec_nd;
-    } else {
-      local_index++;
+    local_index++;
 
-      TreeNode* func_def_param_list_rec_nd = GetFuncDefParamList(token_arr,
-                                                                 &local_index);
+    TreeNode* func_def_param_list_rec_nd = GetFuncDefParamList(token_arr,
+                                                                &local_index);
 
-      if (func_def_param_list_rec_nd != NULL) {
-        ConnectPrntAndChld_(var_spec_nd,
-                            func_def_param_list_rec_nd,
-                            RIGHT_SIDE_);
-      }
-
-      *token_index = local_index;
-      return var_spec_nd;
+    if (func_def_param_list_rec_nd != NULL) {
+      ConnectPrntAndChld_(var_spec_nd,
+                          func_def_param_list_rec_nd,
+                          RIGHT_SIDE_);
     }
+
+    *token_index = local_index;
+    return var_spec_nd;
   }
 }
 
@@ -550,8 +550,8 @@ static TreeNode* GetLogicalOrExpr(DArray* token_arr, Index* token_index) {
     GetNewNode_(logical_and_expr_nd, GetLogicalAndExpr(token_arr, &local_index));
 
     CreateNode_(op_logical_or_nd, op_logical_or_tkn, NULL, NULL);
-    ConnectPrntAndChld_(op_logical_or_nd, hold_nd, RIGHT_SIDE_);
-    ConnectPrntAndChld_(op_logical_or_nd, logical_and_expr_nd, LEFT_SIDE_);
+    ConnectPrntAndChld_(op_logical_or_nd, hold_nd, LEFT_SIDE_);
+    ConnectPrntAndChld_(op_logical_or_nd, logical_and_expr_nd, RIGHT_SIDE_);
     hold_nd = op_logical_or_nd;
 
     if (main_md == NULL) {
@@ -591,8 +591,8 @@ static TreeNode* GetLogicalAndExpr(DArray* token_arr, Index* token_index) {
     GetNewNode_(logical_equal_expr_nd, GetLogicalEqualExpr(token_arr, &local_index));
 
     CreateNode_(op_logical_and_nd, op_logical_and_tkn, NULL, NULL);
-    ConnectPrntAndChld_(op_logical_and_nd, hold_nd, RIGHT_SIDE_);
-    ConnectPrntAndChld_(op_logical_and_nd, logical_equal_expr_nd, LEFT_SIDE_);
+    ConnectPrntAndChld_(op_logical_and_nd, hold_nd, LEFT_SIDE_);
+    ConnectPrntAndChld_(op_logical_and_nd, logical_equal_expr_nd, RIGHT_SIDE_);
     hold_nd = op_logical_and_nd;
 
     if (main_md == NULL) {
@@ -633,8 +633,8 @@ static TreeNode* GetLogicalEqualExpr(DArray* token_arr, Index* token_index) {
     GetNewNode_(new_plm_expr_nd, GetLogicalEqualExpr(token_arr, &local_index));
 
     CreateNode_(op_logical_equal_nd, op_logical_equal_tkn, NULL, NULL);
-    ConnectPrntAndChld_(op_logical_equal_nd, hold_nd, RIGHT_SIDE_);
-    ConnectPrntAndChld_(op_logical_equal_nd, new_plm_expr_nd, LEFT_SIDE_);
+    ConnectPrntAndChld_(op_logical_equal_nd, hold_nd, LEFT_SIDE_);
+    ConnectPrntAndChld_(op_logical_equal_nd, new_plm_expr_nd, RIGHT_SIDE_);
     hold_nd = op_logical_equal_nd;
 
     if (main_md == NULL) {
@@ -674,8 +674,8 @@ static TreeNode* GetPlusMinusExpr(DArray* token_arr, Index* token_index) {
     GetNewNode_(mult_expr_nd, GetMultExpr(token_arr, &local_index));
 
     CreateNode_(op_plm_nd, op_plm_tkn, NULL, NULL);
-    ConnectPrntAndChld_(op_plm_nd, hold_nd, RIGHT_SIDE_);
-    ConnectPrntAndChld_(op_plm_nd, mult_expr_nd, LEFT_SIDE_);
+    ConnectPrntAndChld_(op_plm_nd, hold_nd, LEFT_SIDE_);
+    ConnectPrntAndChld_(op_plm_nd, mult_expr_nd, RIGHT_SIDE_);
     hold_nd = op_plm_nd;
 
     flag = true;
@@ -712,8 +712,8 @@ static TreeNode* GetMultExpr(DArray* token_arr, Index* token_index) {
     GetNewNode_(basic_expr_nd, GetBasicExpr(token_arr, &local_index));
 
     CreateNode_(op_mult_nd, op_mult_tkn, NULL, NULL);
-    ConnectPrntAndChld_(op_mult_nd, hold_nd, RIGHT_SIDE_);
-    ConnectPrntAndChld_(op_mult_nd, basic_expr_nd, LEFT_SIDE_);
+    ConnectPrntAndChld_(op_mult_nd, hold_nd, LEFT_SIDE_);
+    ConnectPrntAndChld_(op_mult_nd, basic_expr_nd, RIGHT_SIDE_);
     hold_nd = op_mult_nd;
 
     flag = true;
@@ -750,7 +750,7 @@ static TreeNode* GetBasicExpr(DArray* token_arr, Index* token_index) {
     punc_left_rnd_br_tkn->type != kTokenType_Punctuation
     || punc_left_rnd_br_tkn->punc != PUNC_LEFT_ROUND_BRACKET);
 
-  GetNewNode_(value_nd, GetValueExpr(token_arr, &local_index));
+  GetNewNode_(value_nd, GetLogicalOrExpr(token_arr, &local_index));
 
   CreateToken_(punc_right_rnd_br_tkn, token_arr, local_index,
     punc_right_rnd_br_tkn->type != kTokenType_Punctuation
