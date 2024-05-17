@@ -915,7 +915,11 @@ static TreeNode* GetIfBranch(DArray* token_arr, Index* token_index) {
     ConnectPrntAndChld_(connect_if_else_sup_nd, kw_if_nd, LEFT_SIDE_);
     ConnectPrntAndChld_(connect_if_else_sup_nd, else_branch_nd, RIGHT_SIDE_);
   } else {
-    ConnectPrntAndChld_(if_branch_sup_nd, kw_if_nd, LEFT_SIDE_);
+    Token connect_if_no_else_sup_tkn = {.type = kTokenType_TreeSup,
+                                        .tree_sup = kTreeSup_ConnectNoElse};
+    CreateNode_(connect_if_no_else_sup_nd, &connect_if_no_else_sup_tkn, NULL, NULL);
+    ConnectPrntAndChld_(if_branch_sup_nd, connect_if_no_else_sup_nd, LEFT_SIDE_);
+    ConnectPrntAndChld_(connect_if_no_else_sup_nd, kw_if_nd, LEFT_SIDE_);
   }
 
   *token_index = local_index;
