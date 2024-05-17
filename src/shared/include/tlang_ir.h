@@ -1,0 +1,38 @@
+#ifndef TLANG_IR_H_
+#define TLANG_IR_H_
+
+#include <stdint.h>
+#include <stdio.h>
+
+#include "list.h"
+#include "ir_def.h"
+#include "ir_name_table.h"
+
+typedef struct IRNode {
+  int64_t       dest_id;
+  IROperandType dest_type;
+  IROperator ir_operator;
+  int64_t       src1_id;
+  IROperandType src1_type;
+  int64_t       src2_id;
+  IROperandType src2_type;
+} IRNode;
+
+typedef struct IRBlock {
+  List* ir_nodes;
+  IRNameTable* local_nt;
+  int64_t last_local_id;
+} IRBlock;
+
+typedef struct IR {
+  List* ir_blocks;
+  IRNameTable* global_nt;
+  int64_t last_global_id;
+} IR;
+
+// inits IR, IRBlocks should be inited separetly
+IR* IR_Ctor();
+void IR_Dump(IR* ir);
+void IR_Out(IR* ir, FILE* out_file);
+
+#endif // TLANG_IR_H_

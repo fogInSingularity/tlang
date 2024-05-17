@@ -186,25 +186,25 @@ static TokenState TokenIdentifier(BinData* data, DArray* token_array,
   ASSERT(debug != NULL);
 
   const char* move_str = data->buf + *shift;
-  if (isalpha(*move_str)) {
-    Token token = {};;
-    token.type = kTokenType_Identifier;
-    token.idnt.str = data->buf + *shift;
-    token.debug = *debug;
-
-    while (move_str < data->buf + data->buf_size
-           && (isalnum(*move_str) || *move_str == '_')) {
-      move_str++;
-    }
-    token.idnt.len = (size_t)(move_str - (data->buf + *shift));
-    DArray_PushBack(token_array, &token);
-    *shift += token.idnt.len;
-    debug->symbol += token.idnt.len;
-
-    return kTokenState_Parsed;
-  } else {
+  if (!isalpha(*move_str)) {
     return kTokenState_Skip;
   }
+
+  Token token = {};
+  token.type = kTokenType_Identifier;
+  token.idnt.str = data->buf + *shift;
+  token.debug = *debug;
+
+  while (move_str < data->buf + data->buf_size
+         && (isalnum(*move_str) || *move_str == '_')) {
+    move_str++;
+  }
+  token.idnt.len = (size_t)(move_str - (data->buf + *shift));
+  DArray_PushBack(token_array, &token);
+  *shift += token.idnt.len;
+  debug->symbol += token.idnt.len;
+
+  return kTokenState_Parsed;
 }
 
 static TokenState TokenOperator(BinData* data, DArray* token_array,

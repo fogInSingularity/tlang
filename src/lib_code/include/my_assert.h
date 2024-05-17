@@ -7,13 +7,16 @@
 #include "lib_config.h"
 
 #if defined(DEBUG)
-#define ASSERT(expr) my_assert(expr, #expr, __FILE__, __PRETTY_FUNCTION__);
+#define ASSERT(expr) my_assert(expr, #expr, __FILE__, __PRETTY_FUNCTION__, __LINE__);
 // #define ASSERT(expr) assert(expr);
 #else
 #define ASSERT(expr) ;
 #endif
 
-void my_assert(bool expr, const char* expr_str, const char* file,
-               const char* func);
+void my_assert(bool expr,
+               const char* expr_str,
+               const char* file,
+               const char* func,
+               int line);
 
 #endif  // LIB_MYASSERT_H_

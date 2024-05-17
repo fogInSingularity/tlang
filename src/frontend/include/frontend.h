@@ -6,6 +6,7 @@
 #include "darray.h"
 #include "bin_file.h"
 #include "tree.h"
+#include "tlang_ir.h"
 
 typedef struct Frontend {
   bool is_valid;
@@ -20,6 +21,7 @@ typedef enum {
   kFrontError_CantOpenSourceFile = 2,
   kFrontError_BadDArrayCtor      = 3,
   kFrontError_BadLexAnalyse      = 4,
+  kFrontError_BadAst             = 5,
 } FrontError;
 
 FrontError FrontCtor(Frontend* front,
@@ -27,6 +29,6 @@ FrontError FrontCtor(Frontend* front,
                      const char* target_file);
 void FrontDtor(Frontend* front);
 
-FrontError FrontPass(Frontend* front);
+FrontError FrontPass(Frontend* front, IR* ir_out);
 
 #endif // FRONTEND_H_

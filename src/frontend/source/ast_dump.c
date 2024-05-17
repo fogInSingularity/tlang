@@ -2,7 +2,7 @@
 
 #define STRINGIFY(to_str) #to_str
 
-void DumpAst(const TreeNode* node, FILE* dump_file) {
+void DumpAst(const TreeNode* node, const TreeNode* root, FILE* dump_file) {
   ASSERT(dump_file != NULL);
 
   if (node == NULL) { return; }
@@ -136,6 +136,9 @@ void DumpAst(const TreeNode* node, FILE* dump_file) {
         case kTreeSup_ConnectIfElse:
           tree_sup_option = STRINGIFY(kTreeSup_ConnectIfElse);
           break;
+        case kTreeSup_ConnectNoElse:
+          tree_sup_option = STRINGIFY(kTreeSup_ConnectNoElse);
+          break;
         case kTreeSup_FunctionCall:
           tree_sup_option = STRINGIFY(kTreeSup_FunctionCall);
           break;
@@ -149,7 +152,7 @@ void DumpAst(const TreeNode* node, FILE* dump_file) {
           tree_sup_option = STRINGIFY(kTreeSup_ReturnExpr);
           break;
         default:
-          PRINT_INT(node->data.tree_sup);
+          PRINT_UINT(node->data.tree_sup);
           ASSERT(0 && ":(");
       }
       fprintf(dump_file,
@@ -169,7 +172,7 @@ void DumpAst(const TreeNode* node, FILE* dump_file) {
   if (node->r_child != NULL) {
     fprintf(dump_file, "node_%lu->node_%lu [color=red]\n", (size_t)node, (size_t)node->r_child);
   }
-  if (node->parent != NULL) {
+  if (node->parent != NULL && node->parent != root) {
     fprintf(dump_file, "node_%lu->node_%lu [style=dotted]\n", (size_t)node, (size_t)node->parent);
   }
 }

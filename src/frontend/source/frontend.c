@@ -7,6 +7,8 @@
 #include "ast_builder.h"
 #include "lexer.h"
 #include "tree.h"
+#include "tlang_ir.h"
+#include "ast_to_ir.h"
 
 //global-----------------------------------------------------------------------
 
@@ -45,14 +47,16 @@ void FrontDtor(Frontend* front) {
   front->is_valid = false;
 }
 
-FrontError FrontPass(Frontend* front) {
+FrontError FrontPass(Frontend* front, IR* ir_out) {
   ASSERT(front != NULL);
 
   LexicalError lex_error = Lexer(&front->source_data, &front->token_array);
   if (lex_error != kLexicalError_Success) { return kFrontError_BadLexAnalyse; }
 
   AstError ast_error = AstBuilder(&front->token_array, &front->ast);
-  
+  if (ast_error != kAstError_Success) { return kFrontError_BadAst; }
+
+  IR* ir = TranslateAstToIr(&front->ast);
 
   return kFrontError_Success;
 }

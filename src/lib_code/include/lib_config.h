@@ -5,9 +5,9 @@
 
 #if defined (DEBUG)
 #define SINGLE_DOLLAR_ON 1
-#define DOUBLE_DOLLAR_ON 1
-#define TRIPLE_DOLLAR_ON 1
-#define QUAD_DOLLAR_ON 1
+// #define DOUBLE_DOLLAR_ON 1
+// #define TRIPLE_DOLLAR_ON 1
+// #define QUAD_DOLLAR_ON   1
 
 // #define FILE_WRAPER_LOG_ON 1
 // #define ALLOC_WRAPER_LOG_ON 1

@@ -14,8 +14,10 @@ int main(const int argc, const char** argv) {
   Frontend front = {};
   error = FrontCtor(&front, argv[1], argv[2]);
 
+  IR ir = {};
+
   if (error == kFrontError_Success) {
-    error = FrontPass(&front);
+    error = FrontPass(&front, &ir);
   }
 
   FrontDtor(&front);

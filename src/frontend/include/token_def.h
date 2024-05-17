@@ -12,7 +12,7 @@ typedef enum TokenType {
   kTokenType_StringLit   = 4,
   kTokenType_Operator    = 5,
   kTokenType_Punctuation = 6,
-  kTokenType_TreeSup     = 7
+  kTokenType_TreeSup     = 7,
 } TokenType;
 
 typedef enum ConstType {
@@ -79,11 +79,12 @@ typedef enum TreeSup {
   kTreeSup_ValueExpr         = 8,
   kTreeSup_Statement         = 9,
   kTreeSup_ConnectIfElse     = 10,
-  kTreeSup_FunctionCall      = 11,
-  kTreeSup_FunctionDef       = 12,
-  kTreeSup_FunctionNoParam   = 13,
-  kTreeSup_FunctionParamList = 14,
-  kTreeSup_ReturnExpr        = 15,
+  kTreeSup_ConnectNoElse     = 11,
+  kTreeSup_FunctionCall      = 12,
+  kTreeSup_FunctionDef       = 13,
+  kTreeSup_FunctionNoParam   = 14,
+  kTreeSup_FunctionParamList = 15,
+  kTreeSup_ReturnExpr        = 16,
 } TreeSup;
 
 typedef struct Token {

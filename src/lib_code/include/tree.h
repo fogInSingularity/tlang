@@ -22,7 +22,9 @@ typedef enum TreeError {
   kTreeError_Success = 0,
 } TreeError;
 
-typedef void DumpTreeNodeFunc(const TreeNode* node, FILE* dump_file);
+typedef void DumpTreeNodeFunc(const TreeNode* node,
+                              const TreeNode* root,
+                              FILE* dump_file);
 
 void TreeCtor(Tree* tree);
 void TreeDtor(Tree* tree);

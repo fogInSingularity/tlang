@@ -10,6 +10,7 @@
 //static-----------------------------------------------------------------------
 
 static void TreeDumpNode(const TreeNode* node,
+                         const TreeNode* root,
                          FILE* dump_file,
                          DumpTreeNodeFunc* DumpNode);
 
@@ -37,7 +38,7 @@ void TreeDotDump(const Tree* tree, DumpTreeNodeFunc* DumpNode) {
   fprintf(dump_file, "digraph {\n");
   // fprintf(dump_file, "rankdir=LR\n");
   // TreeDumpNode(tree->root.l_child, dump_file, DumpNode);
-  TreeDumpNode(tree->root.r_child, dump_file, DumpNode);
+  TreeDumpNode(tree->root.r_child, &tree->root, dump_file, DumpNode);
   fprintf(dump_file, "}\n");
 
   FCLOSEW(dump_file);
@@ -72,6 +73,7 @@ Counter TreeDtorNode(TreeNode* node) {
 //static-----------------------------------------------------------------------
 
 static void TreeDumpNode(const TreeNode* node,
+                         const TreeNode* root,
                          FILE* dump_file,
                          DumpTreeNodeFunc* DumpNode) {
   ASSERT(dump_file != NULL);
@@ -79,8 +81,8 @@ static void TreeDumpNode(const TreeNode* node,
 
   if (node == NULL) { return; }
 
-  DumpNode(node, dump_file);
+  DumpNode(node, root, dump_file);
 
-  TreeDumpNode(node->l_child, dump_file, DumpNode);
-  TreeDumpNode(node->r_child, dump_file, DumpNode);
+  TreeDumpNode(node->l_child, root, dump_file, DumpNode);
+  TreeDumpNode(node->r_child, root, dump_file, DumpNode);
 }

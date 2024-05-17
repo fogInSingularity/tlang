@@ -10,17 +10,18 @@
 #define USE_VAR(var) (void)var;
 
 #if defined (DEBUG)
-#define PRINT_BYTE(n)    (void)fprintf(stderr, "[line: %d, type: byte] %s %x\n", __LINE__, #n, n);
-#define PRINT_INT(n)     (void)fprintf(stderr, "[line: %d, type: int] %s %d\n", __LINE__, #n, n);
-#define PRINT_UINT(n)    (void)fprintf(stderr, "[line: %d, type: uint] %s %u\n", __LINE__, #n, n);
-#define PRINT_LONG(n)    (void)fprintf(stderr, "[line: %d, type: long] %s %ld\n", __LINE__, #n, n);
-#define PRINT_ULONG(n)   (void)fprintf(stderr, "[line: %d, type: ulong] %s %lu\n", __LINE__, #n, n);
-#define PRINT_ULX(n)     (void)fprintf(stderr, "[line: %d, type: ulong_b] %s %lX\n", __LINE__, #n, n);
-#define PRINT_DOUBLE(n)  (void)fprintf(stderr, "[line: %d, type: double] %s %lf\n", __LINE__, #n, n);
-#define PRINT_FLOAT(n)   (void)fprintf(stderr, "[line: %d, type: float] %s %f\n", __LINE__, #n, n);
-#define PRINT_POINTER(p) (void)fprintf(stderr, "[line: %d, type: pointer] %s %p\n", __LINE__, #p, p);
-#define PRINT_CHAR(n)    (void)fprintf(stderr, "[line: %d, type: char] %s %c\n", __LINE__, #n, n);
-#define PRINT_SIZE(n)    (void)fprintf(stderr, "[line: %d, type: byte] %s %lu\n", __LINE__, #n, n);
+#define PRINT_BYTE(n)    (void)fprintf(stderr, BOLD GREEN "[%s:%d, type: byte] %s %x\n" RESET, __FILE__, __LINE__, #n, n);
+#define PRINT_INT(n)     (void)fprintf(stderr, BOLD GREEN "[%s:%d, type: int] %s %d\n" RESET, __FILE__, __LINE__, #n, n);
+#define PRINT_UINT(n)    (void)fprintf(stderr, BOLD GREEN "[%s:%d, type: uint] %s %u\n" RESET, __FILE__, __LINE__, #n, n);
+#define PRINT_LONG(n)    (void)fprintf(stderr, BOLD GREEN "[%s:%d, type: long] %s %ld\n" RESET, __FILE__, __LINE__, #n, n);
+#define PRINT_ULONG(n)   (void)fprintf(stderr, BOLD GREEN "[%s:%d, type: ulong] %s %lu\n" RESET, __FILE__, __LINE__, #n, n);
+#define PRINT_ULX(n)     (void)fprintf(stderr, BOLD GREEN "[%s:%d, type: ulong_b] %s %lX\n" RESET, __FILE__, __LINE__, #n, n);
+#define PRINT_DOUBLE(n)  (void)fprintf(stderr, BOLD GREEN "[%s:%d, type: double] %s %lf\n" RESET, __FILE__, __LINE__, #n, n);
+#define PRINT_FLOAT(n)   (void)fprintf(stderr, BOLD GREEN "[%s:%d, type: float] %s %f\n" RESET, __FILE__, __LINE__, #n, n);
+#define PRINT_POINTER(p) (void)fprintf(stderr, BOLD GREEN "[%s:%d, type: pointer] %s %p\n" RESET, __FILE__, __LINE__, #p, p);
+#define PRINT_CHAR(n)    (void)fprintf(stderr, BOLD GREEN "[%s:%d, type: char] %s %c\n" RESET, __FILE__, __LINE__, #n, n);
+#define PRINT_SIZE(n)    (void)fprintf(stderr, BOLD GREEN "[%s:%d, type: size] %s %lu\n" RESET, __FILE__, __LINE__, #n, n);
+#define PRINT_STR(s)     (void)fprintf(stderr, BOLD GREEN "[%s:%d, type: str] %s %s\n" RESET, __FILE__, __LINE__, #s, s);
 #else
 #define PRINT_BYTE(n)   ;
 #define PRINT_INT(n)    ;
@@ -30,6 +31,7 @@
 #define PRINT_ULX(n)    ;
 #define PRINT_DOUBLE(n) ;
 #define PRINT_FLOAT(n)  ;
+#define PRINT_STR(s)    ;
 #endif // DEBUG
 
 #ifdef SINGLE_DOLLAR_ON
