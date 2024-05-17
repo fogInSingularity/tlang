@@ -6,10 +6,11 @@ str_lit := " "
 punc := punc
 
 add ponters, typeof, sizeof
-
-front parsses input to tree and save it
-middle opimize tree
-back translate tree
+*cring^*
 
 left = blue
 right = red
+
+calling convention:
+  args throw the stack
+  return value on top of the args

@@ -86,8 +86,9 @@
   | IDENTIFIER
   | CONST
   | STR_LIT
-  | PUNC_LEFT_ROUND_BRACKET value_expr PUNC_RIGHT_ROUND_BRACKET //???
+  | PUNC_LEFT_ROUND_BRACKET logical_or_expr PUNC_RIGHT_ROUND_BRACKET //???
   ;
+// logical_or_expr instead of value_expr
 
 +return_expr(#sup)
   : KW_RETURN value_expr PUNC_SEMICOLON
