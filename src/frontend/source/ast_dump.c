@@ -1,7 +1,5 @@
 #include "ast_dump.h"
 
-#define STRINGIFY(to_str) #to_str
-
 void DumpAst(const TreeNode* node, const TreeNode* root, FILE* dump_file) {
   ASSERT(dump_file != NULL);
 

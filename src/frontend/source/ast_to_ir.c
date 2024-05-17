@@ -105,11 +105,8 @@ static IROperator OperatorToIR(Operator op);
 
 // global ----------------------------------------------------------------------
 
-IR* TranslateAstToIr(Tree* ast) {
+IR* TranslateAstToIr(Tree* ast, IR* ir) {
   ASSERT(ast != NULL);
-
-  IR* ir = IR_Ctor();
-  if (ir == NULL) { return NULL; }
 
   TreeNode* iter_node = ast->root.r_child;
   while (iter_node != NULL) {
@@ -118,10 +115,8 @@ IR* TranslateAstToIr(Tree* ast) {
     iter_node = iter_node->r_child;
   }
 
-//NOTE
   IRNameTable_Dump(ir->global_nt);
   IR_Dump(ir);
-  IR_Out(ir, stdout);
 
   return ir;
 }
@@ -150,7 +145,6 @@ static void TranslateFunctionToIrBlock(TreeNode* func_node, IR* ir) {
   ListNode* last_ir_node =  List_LastNode(new_ir_block->ir_nodes);
   TranslateStatement(func_node->l_child->r_child, new_ir_block, last_ir_node, ir->global_nt);
 
-//NOTE
   IRNameTable_Dump(new_ir_block->local_nt);
 }
 

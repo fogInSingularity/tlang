@@ -12,16 +12,13 @@
 
 //global-----------------------------------------------------------------------
 
-FrontError FrontCtor(Frontend* front,
-                     const char* source_file,
-                     const char* target_file) {
+FrontError FrontCtor(Frontend* front, const CompilerRuntimeConfig* config) {
   ASSERT(front != NULL);
-  ASSERT(source_file != NULL);
-  ASSERT(target_file != NULL);
+  ASSERT(config != NULL);
 
   front->is_valid = false;
 
-  FILE* source = FOPENW(source_file, "r");
+  FILE* source = FOPENW(config->source_filename, "r");
   if (source == NULL) { return kFrontError_CantOpenSourceFile; }
 
   GetData(&front->source_data, source);
@@ -30,7 +27,10 @@ FrontError FrontCtor(Frontend* front,
   DArrayError darr_error = DArray_Ctor(&front->token_array, sizeof(Token), 0);
   if (darr_error != kDArrayError_Success) { return kFrontError_BadDArrayCtor; }
 
-  TreeCtor(&front->ast);
+  TreeCtor(&front->ast, config->output_ast_dot, config->ast_out_dot_filename);
+
+  front->output_ast_dot = config->output_ast_dot;
+  front->ast_out_dot_filename = config->ast_out_dot_filename;
 
   front->is_valid = true;
 
@@ -47,8 +47,36 @@ void FrontDtor(Frontend* front) {
   front->is_valid = false;
 }
 
-FrontError FrontPass(Frontend* front, IR* ir_out) {
+void FrontThrowError(FrontError error) {
+  switch (error) { //FIXME
+    case kFrontError_Success:
+      /* ok */
+      break;
+    case kFrontError_CtorBadAlloc:
+      PRINT_STR(STRINGIFY(kFrontError_CtorBadAlloc));
+      break;
+    case kFrontError_CantOpenSourceFile:
+      PRINT_STR(STRINGIFY(kFrontError_CantOpenSourceFile));
+      break;
+    case kFrontError_BadDArrayCtor:
+      PRINT_STR(STRINGIFY(kFrontError_BadDArrayCtor));
+      break;
+    case kFrontError_BadLexAnalyse:
+      PRINT_STR(STRINGIFY(kFrontError_BadLexAnalyse));
+      break;
+    case kFrontError_BadAst:
+      PRINT_STR(STRINGIFY(kFrontError_BadAst));
+      break;
+    case kFrontError_InvalidFront:
+      PRINT_STR(STRINGIFY(kFrontError_InvalidFront));
+      break;
+  }
+}
+
+FrontError FrontPass(Frontend* front, IR* ir) {
   ASSERT(front != NULL);
+
+  if (!front->is_valid) { return kFrontError_InvalidFront; }
 
   LexicalError lex_error = Lexer(&front->source_data, &front->token_array);
   if (lex_error != kLexicalError_Success) { return kFrontError_BadLexAnalyse; }
@@ -56,7 +84,7 @@ FrontError FrontPass(Frontend* front, IR* ir_out) {
   AstError ast_error = AstBuilder(&front->token_array, &front->ast);
   if (ast_error != kAstError_Success) { return kFrontError_BadAst; }
 
-  IR* ir = TranslateAstToIr(&front->ast);
+  TranslateAstToIr(&front->ast, ir);
 
   return kFrontError_Success;
 }

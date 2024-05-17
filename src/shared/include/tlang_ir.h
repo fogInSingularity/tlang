@@ -28,11 +28,14 @@ typedef struct IR {
   List* ir_blocks;
   IRNameTable* global_nt;
   int64_t last_global_id;
+  // ir dump
+  bool do_dump;
+  const char* dump_filename;
 } IR;
 
 // inits IR, IRBlocks should be inited separetly
-IR* IR_Ctor();
+IR* IR_Ctor(bool do_dump, const char* dump_filename);
 void IR_Dump(IR* ir);
-void IR_Out(IR* ir, FILE* out_file);
+void IR_Out(IR* ir);
 
 #endif // TLANG_IR_H_

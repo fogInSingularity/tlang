@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 
+#include "compiler_runtime_conf.h"
 #include "darray.h"
 #include "bin_file.h"
 #include "tree.h"
@@ -13,6 +14,9 @@ typedef struct Frontend {
   BinData source_data;
   DArray token_array;
   Tree ast;
+  // ast dump:
+  bool output_ast_dot;
+  const char* ast_out_dot_filename;
 } Frontend;
 
 typedef enum {
@@ -22,13 +26,13 @@ typedef enum {
   kFrontError_BadDArrayCtor      = 3,
   kFrontError_BadLexAnalyse      = 4,
   kFrontError_BadAst             = 5,
+  kFrontError_InvalidFront       = 6,
 } FrontError;
 
-FrontError FrontCtor(Frontend* front,
-                     const char* source_file,
-                     const char* target_file);
+FrontError FrontCtor(Frontend* front, const CompilerRuntimeConfig* config);
 void FrontDtor(Frontend* front);
+void FrontThrowError(FrontError error);
 
-FrontError FrontPass(Frontend* front, IR* ir_out);
+FrontError FrontPass(Frontend* front, IR* ir);
 
 #endif // FRONTEND_H_

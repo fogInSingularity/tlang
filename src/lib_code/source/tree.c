@@ -16,12 +16,15 @@ static void TreeDumpNode(const TreeNode* node,
 
 //global-----------------------------------------------------------------------
 
-void TreeCtor(Tree* tree) {
+void TreeCtor(Tree* tree, bool do_dump, const char* dump_filename) {
   ASSERT(tree != NULL);
+  ASSERT(dump_filename != NULL);
 
   tree->root.l_child = NULL;
   tree->root.r_child = NULL;
   tree->root.parent = NULL;
+  tree->do_dump = do_dump;
+  tree->dump_filename = dump_filename;
 }
 
 void TreeDtor(Tree* tree) {
@@ -32,12 +35,12 @@ void TreeDtor(Tree* tree) {
 }
 
 void TreeDotDump(const Tree* tree, DumpTreeNodeFunc* DumpNode) {
-  FILE* dump_file = FOPENW("dump_tree.dot", "w");
+  if (!tree->do_dump) { return ; }
+
+  FILE* dump_file = FOPENW(tree->dump_filename, "w");
   if (dump_file == NULL) { return; }
 
   fprintf(dump_file, "digraph {\n");
-  // fprintf(dump_file, "rankdir=LR\n");
-  // TreeDumpNode(tree->root.l_child, dump_file, DumpNode);
   TreeDumpNode(tree->root.r_child, &tree->root, dump_file, DumpNode);
   fprintf(dump_file, "}\n");
 

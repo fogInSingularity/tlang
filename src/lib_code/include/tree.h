@@ -16,6 +16,9 @@ typedef struct TreeNode {
 
 typedef struct Tree {
   TreeNode root;
+
+  bool do_dump;
+  const char* dump_filename;
 } Tree;
 
 typedef enum TreeError {
@@ -26,7 +29,7 @@ typedef void DumpTreeNodeFunc(const TreeNode* node,
                               const TreeNode* root,
                               FILE* dump_file);
 
-void TreeCtor(Tree* tree);
+void TreeCtor(Tree* tree, bool do_dump, const char* dump_filename);
 void TreeDtor(Tree* tree);
 TreeNode* TreeCtorNode(TreeElem* data, TreeNode* parent);
 Counter TreeDtorNode(TreeNode* node);

@@ -9,6 +9,10 @@
 
 #define USE_VAR(var) (void)var;
 
+#if !defined(STRINGIFY)
+#define STRINGIFY(x) #x
+#endif // STRINGIFY
+
 #if defined (DEBUG)
 #define PRINT_BYTE(n)    (void)fprintf(stderr, BOLD GREEN "[%s:%d, type: byte] %s %x\n" RESET, __FILE__, __LINE__, #n, n);
 #define PRINT_INT(n)     (void)fprintf(stderr, BOLD GREEN "[%s:%d, type: int] %s %d\n" RESET, __FILE__, __LINE__, #n, n);

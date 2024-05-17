@@ -4,6 +4,7 @@
 
 #include "my_assert.h"
 #include "debug.h"
+#include "file_wraper.h"
 #include "ir_def_to_str.h"
 
 // macro -----------------------------------------------------------------------
@@ -27,7 +28,7 @@ static const char* IdToStr(int64_t ir_id,
 
 // global ----------------------------------------------------------------------
 
-IR* IR_Ctor() {
+IR* IR_Ctor(bool do_dump, const char* dump_filename) {
   IR* new_ir = calloc(1, sizeof(IR));
   if (new_ir == NULL) { return NULL; }
 
@@ -41,6 +42,8 @@ IR* IR_Ctor() {
   }
 
   new_ir->last_global_id = 1;
+  new_ir->do_dump = do_dump;
+  new_ir->dump_filename = dump_filename;
 
   return new_ir;
 }
@@ -66,9 +69,12 @@ void IR_Dump(IR* ir) {
   // dump_print("# }\n");
 }
 
-void IR_Out(IR* ir, FILE* out_file) {
+void IR_Out(IR* ir) {
   ASSERT(ir != NULL);
-  ASSERT(out_file != NULL);
+
+  if (!ir->do_dump) { return ; }
+
+  FILE* out_file = FOPENW(ir->dump_filename, "w");
 
   ListNode* iter_node = List_FirstNode(ir->ir_blocks);
   while (iter_node != NULL) {
@@ -76,6 +82,8 @@ void IR_Out(IR* ir, FILE* out_file) {
     IRBlock_Out(ir_block, ir, out_file);
     iter_node = List_NextNode(ir->ir_blocks, iter_node);
   }
+
+  FCLOSEW(out_file);
 }
 
 // static ----------------------------------------------------------------------

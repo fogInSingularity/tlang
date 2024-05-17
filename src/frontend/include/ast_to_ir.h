@@ -3,7 +3,7 @@
 
 #include "tlang_ir.h"
 #include "tree.h"
- 
-IR* TranslateAstToIr(Tree* ast);
+
+IR* TranslateAstToIr(Tree* ast, IR* ir);
 
 #endif // AST_TO_IR_H_
