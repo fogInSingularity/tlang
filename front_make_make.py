@@ -9,10 +9,10 @@ EXE_ARGS =
 EXE_LOG = 2>log
 """
 
-include = "\nINCLUDE = -Isrc/frontend/include/ -Isrc/lib_code/include/\n"
+include = "\nINCLUDE = -Isrc/frontend/include/ -Isrc/lib_code/include/ -Isrc/shared/include/\n"
 
-c_files = "src/lib_code/source/utils.c src/lib_code/source/racalloc.c src/lib_code/source/my_assert.c src/lib_code/source/darray.c src/lib_code/source/bin_file.c src/lib_code/source/file_wraper.c src/lib_code/source/tree.c src/frontend/source/main.c src/frontend/source/frontend.c src/frontend/source/lexer.c src/frontend/source/ast_builder.c src/frontend/source/ast_dump.c src/lib_code/source/alloc_wraper.c"
-c_objects = "src/lib_code/build/utils.o src/lib_code/build/racalloc.o src/lib_code/build/my_assert.o src/lib_code/build/darray.o src/lib_code/build/bin_file.o src/lib_code/build/file_wraper.o src/lib_code/build/tree.o src/frontend/build/main.o src/frontend/build/frontend.o src/frontend/build/lexer.o src/frontend/build/ast_builder.o src/frontend/build/ast_dump.o src/lib_code/build/alloc_wraper.o"
+c_files = "src/lib_code/source/utils.c src/lib_code/source/racalloc.c src/lib_code/source/my_assert.c src/lib_code/source/darray.c src/lib_code/source/bin_file.c src/lib_code/source/file_wraper.c src/lib_code/source/tree.c src/frontend/source/main.c src/frontend/source/frontend.c src/frontend/source/lexer.c src/frontend/source/ast_builder.c src/frontend/source/ast_dump.c src/lib_code/source/alloc_wraper.c src/lib_code/source/list.c src/shared/source/ir_name_table.c src/frontend/source/ast_to_ir.c src/shared/source/tlang_ir.c src/shared/source/ir_def_to_str.c"
+c_objects = "src/lib_code/build/utils.o src/lib_code/build/racalloc.o src/lib_code/build/my_assert.o src/lib_code/build/darray.o src/lib_code/build/bin_file.o src/lib_code/build/file_wraper.o src/lib_code/build/tree.o src/frontend/build/main.o src/frontend/build/frontend.o src/frontend/build/lexer.o src/frontend/build/ast_builder.o src/frontend/build/ast_dump.o src/lib_code/build/alloc_wraper.o src/lib_code/build/list.o src/shared/build/ir_name_table.o src/frontend/build/ast_to_ir.o src/shared/build/tlang_ir.o src/shared/build/ir_def_to_str.o"
 
 debug_target = """debug_front: all
 all: {}

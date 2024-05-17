@@ -1,6 +1,6 @@
 # sep_str = "# ------------------------------------------------------------------------------\n"
 
-clean_cmd = "rm src/frontend/build/* src/lib_code/build/*"
+clean_cmd = "rm src/frontend/build/* src/lib_code/build/* src/shared/build/*"
 
 main_make_str = """
 all:
@@ -13,7 +13,6 @@ release_front:
 debug_front:
 \t@echo 'Compiler $(CC)'
 \tmake -f make_front_debug CC=$(CC) -j8
-
 clean:
 \t{}
 
