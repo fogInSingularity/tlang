@@ -6,10 +6,8 @@ warn_str = """# ------------------------------------------
 """
 
 main_make_filename = "makefile"
-front_make_debug_filename = "make_front_debug"
-front_make_release_filename = "make_front_release"
-# mid_make_filename = "make_mid"
-# back_make_filename = "make_back"
+make_debug_filename = "make_debug"
+make_release_filename = "make_release"
 
 # ------------------------------------------------------------------------------
 
@@ -20,10 +18,10 @@ main_make_file.write(warn_str + main_make_make.main_make_str)
 
 # ------------------------------------------------------------------------------
 
-import front_make_make
+import files_make_make
 
-front_make_debug_file = open(front_make_debug_filename, "w")
-front_make_debug_file.write(warn_str + front_make_make.front_make_debug_str)
+make_debug_file = open(make_debug_filename, "w")
+make_debug_file.write(warn_str + files_make_make.make_debug_str)
 
-front_make_release_file = open(front_make_release_filename, "w")
-front_make_release_file.write(warn_str + front_make_make.front_make_release_str)
+make_release_file = open(make_release_filename, "w")
+make_release_file.write(warn_str + files_make_make.make_release_str)
