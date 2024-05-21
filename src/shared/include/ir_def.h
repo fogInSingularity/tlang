@@ -10,7 +10,7 @@ typedef enum IROperator {
 #define DEF_IR_OPERATOR(enum_name_, enum_id_) \
   kIROperator_ ## enum_name_ = enum_id_,
 
-#include "ir_operators.h"
+#include "ir_operators.inc"
 #undef DEF_IR_OPERATOR
 
 } IROperator;

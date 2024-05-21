@@ -1,7 +1,7 @@
 #ifndef LIB_COLOR_H_
 #define LIB_COLOR_H_
 
-#include "lib_config.h"
+// #include "lib_config.h"
 
 #ifdef COLOR_ON
 #define BLACK     "\x1b[30m"

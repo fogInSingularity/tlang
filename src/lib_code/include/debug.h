@@ -27,15 +27,19 @@
 #define PRINT_SIZE(n)    (void)fprintf(stderr, BOLD GREEN "[%s:%d, type: size] %s %lu\n" RESET, __FILE__, __LINE__, #n, n);
 #define PRINT_STR(s)     (void)fprintf(stderr, BOLD GREEN "[%s:%d, type: str] %s %s\n" RESET, __FILE__, __LINE__, #s, s);
 #else
-#define PRINT_BYTE(n)   ;
-#define PRINT_INT(n)    ;
-#define PRINT_UINT(n)   ;
-#define PRINT_LONG(n)   ;
-#define PRINT_ULONG(n)  ;
-#define PRINT_ULX(n)    ;
-#define PRINT_DOUBLE(n) ;
-#define PRINT_FLOAT(n)  ;
-#define PRINT_STR(s)    ;
+#define PRINT_BYTE(n)    ;
+#define PRINT_INT(n)     ;
+#define PRINT_UINT(n)    ;
+#define PRINT_LONG(n)    ;
+#define PRINT_ULONG(n)   ;
+#define PRINT_ULX(n)     ;
+#define PRINT_DOUBLE(n)  ;
+#define PRINT_FLOAT(n)   ;
+#define PRINT_POINTER(p) ;
+#define PRINT_CHAR(n)    ;
+#define PRINT_SIZE(n)    ;
+#define PRINT_STR(s)     ;
+
 #endif // DEBUG
 
 #ifdef SINGLE_DOLLAR_ON

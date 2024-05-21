@@ -22,7 +22,7 @@ FILE* FOpenW(const char* file_name,
 
 #if defined (FILE_WRAPER_LOG_ON)
     fprintf(stderr, "# FOpenW call:\n");
-    fprintf(stderr, "#   from: [ %s ][ %d ][ %s ]\n", debug_filename, debug_line, debug_func);
+    fprintf(stderr, "#   from: [ %s:%d ][ %s ]\n", debug_filename, debug_line, debug_func);
     fprintf(stderr, "#   [ filename ]: %s [ modes ]: %s\n", file_name, modes);
     fprintf(stderr, "#   files opened before call: %ld\n", files_opened);
 #endif // FILE_WRAPER_LOG_ON
@@ -52,7 +52,7 @@ int FCloseW(FILE* stream,
 
 #if defined (FILE_WRAPER_LOG_ON)
     fprintf(stderr, "# FCloseW call:\n");
-    fprintf(stderr, "#   from: [ %s ][ %d ][ %s ]\n", debug_filename, debug_line, debug_func);
+    fprintf(stderr, "#   from: [ %s:%d ][ %s ]\n", debug_filename, debug_line, debug_func);
     fprintf(stderr, "#   [ FILE* ]: %p\n", stream);
     fprintf(stderr, "#   files opened before call: %ld\n", files_opened);
 #endif // FILE_WRAPER_LOG_ON
@@ -85,12 +85,18 @@ static int64_t files_raw_opened = 0;
 
 // static const char* FlagsToStr(int flags); //FIXME
 
-int RawOpenW(const char* file_name, int flags) {
+int RawOpenW(const char* file_name, int flags,
+             UNUSED const char* debug_filename,
+             UNUSED const int debug_line,
+             UNUSED const char* debug_func) {
     ASSERT(file_name != NULL);
+    ASSERT(debug_filename != NULL);
+    ASSERT(debug_func != NULL);
 
 #if defined (FILE_WRAPER_LOG_ON)
     fprintf(stderr, "# RawOpenW call:\n");
     fprintf(stderr, "#   [ filename ]: %s [ flags ]: %d\n", file_name, flags);
+    fprintf(stderr, "#   from: [ %s:%d ][ %s ]\n", debug_filename, debug_line, debug_func);
     fprintf(stderr, "#   files raw opened before call: %ld\n", files_raw_opened);
 #endif // FILE_WRAPER_LOG_ON
 
@@ -111,9 +117,16 @@ int RawOpenW(const char* file_name, int flags) {
     return new_fd;
 }
 
-int RawCloseW(int fd) {
+int RawCloseW(int fd,
+              UNUSED const char* debug_filename,
+              UNUSED const int debug_line,
+              UNUSED const char* debug_func) {
+    ASSERT(debug_filename != NULL);
+    ASSERT(debug_filename != NULL);
+    ASSERT(debug_func != NULL);
 #if defined (FILE_WRAPER_LOG_ON)
     fprintf(stderr, "# RawCloseW call:\n");
+    fprintf(stderr, "#   from: [ %s:%d ][ %s ]\n", debug_filename, debug_line, debug_func);
     fprintf(stderr, "#   [ file descriprtor]: %d\n", fd);
     fprintf(stderr, "#   files raw opened before call: %ld\n", files_raw_opened);
 #endif // FILE_WRAPER_LOG_ON

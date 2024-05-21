@@ -7,6 +7,8 @@
 
 #include "my_assert.h"
 
+#include "io64lib.h"
+
 // macro -----------------------------------------------------------------------
 
 //NOTE
@@ -27,67 +29,64 @@ static void TranslateFunctionToIrBlock(TreeNode* func_node,
                                        IR* ir);
 static void TranslateFuncNameAndParam(TreeNode* func_node,
                                       IRBlock* func_ir_block,
-                                      IRNameTable* global_nt,
-                                      int64_t* global_id);
-// static void TranslateFuncStatement(TreeNode* func_node,
-//                                    IRBlock* func_ir_block);
+                                      IR* ir);
 
 static ListNode* TranslateStatement(TreeNode* st_tnode,
                                     IRBlock* func_ir_block,
                                     ListNode* last_ir_node,
-                                    IRNameTable* global_nt);
+                                    IR* ir);
 
 static ListNode* TranslateSingleStatement(TreeNode* single_st_tnode,
                                           IRBlock* func_ir_block,
                                           ListNode* last_ir_node,
-                                          IRNameTable* global_nt);
+                                          IR* ir);
 
 static ListNode* TranslateVarInit(TreeNode* single_st_tnode,
                                   IRBlock* func_ir_block,
                                   ListNode* last_ir_node,
-                                  IRNameTable* global_nt);
+                                  IR* ir);
 
 static ListNode* TranslateAssignExpr(TreeNode* single_st_tnode,
                                      IRBlock* func_ir_block,
                                      ListNode* last_ir_node,
-                                     IRNameTable* global_nt);
+                                     IR* ir);
 
 static ListNode* TranslateValueExpr(TreeNode* single_st_tnode,
                                     IRBlock* func_ir_block,
                                     ListNode* last_ir_node,
-                                    IRNameTable* global_nt,
+                                    IR* ir,
                                     int64_t* res_id_out);
 
 static ListNode* TranslateReturnExpr(TreeNode* single_st_tnode,
                                      IRBlock* func_ir_block,
                                      ListNode* last_ir_node,
-                                     IRNameTable* global_nt);
+                                     IR* ir);
 
 static ListNode* TranslateIfBranch(TreeNode* if_br_tnode,
                                    IRBlock* func_ir_block,
                                    ListNode* last_ir_node,
-                                   IRNameTable* global_nt);
+                                   IR* ir);
 
 static ListNode* TranslateElseBranch(TreeNode* else_br_tnode,
                                      IRBlock* func_ir_block,
                                      ListNode* last_ir_node,
-                                     IRNameTable* global_nt);
+                                     IR* ir);
 
 static ListNode* TranslateWhileLoop(TreeNode* while_loop_tnode,
                                     IRBlock* func_ir_block,
                                     ListNode* last_ir_node,
-                                    IRNameTable* global_nt);
+                                    IR* ir);
 
 static ListNode* TranslateFunctionCall(TreeNode* func_call_tnode,
                                       IRBlock* func_ir_block,
                                       ListNode* last_ir_node,
-                                      IRNameTable* global_nt,
+                                      IR* ir,
                                       int64_t* res_id_out);
 
 static ListNode* TranslateValueItself(TreeNode* value_tnode,
                                       IRBlock* func_ir_block,
                                       ListNode* last_ir_node,
-                                      IRNameTable* global_nt,
+                                      IR* ir,
                                       int64_t* res_id_out);
 
 static int64_t GetNParam(TreeNode* func_node);
@@ -109,6 +108,11 @@ IR* TranslateAstToIr(Tree* ast, IR* ir) {
   ASSERT(ast != NULL);
 
   TreeNode* iter_node = ast->root.r_child;
+
+  IRNameTable_Insert(ir->global_nt, kInputI64, strlen(kInputI64), ir->last_global_id++, kIROperandType_Function, 0);
+  IRNameTable_Insert(ir->global_nt, kOutputI64, strlen(kOutputI64), ir->last_global_id++, kIROperandType_Function, 1);
+  IRNameTable_Insert(ir->global_nt, kExit, strlen(kExit), ir->last_global_id++, kIROperandType_Function, 0);
+
   while (iter_node != NULL) {
     TranslateFunctionToIrBlock(iter_node, ir);
 
@@ -137,28 +141,27 @@ static void TranslateFunctionToIrBlock(TreeNode* func_node, IR* ir) {
   new_ir_block->local_nt = IRNameTable_Ctor();
   if (new_ir_block->local_nt == NULL) { $ return ; }
 
+  new_ir_block->number_of_local_vars = 0;
+
   TranslateFuncNameAndParam(func_node,
                             new_ir_block,
-                            ir->global_nt,
-                            &ir->last_global_id);
+                            ir);
 
   ListNode* last_ir_node =  List_LastNode(new_ir_block->ir_nodes);
-  TranslateStatement(func_node->l_child->r_child, new_ir_block, last_ir_node, ir->global_nt);
+  TranslateStatement(func_node->l_child->r_child, new_ir_block, last_ir_node, ir);
 
   IRNameTable_Dump(new_ir_block->local_nt);
 }
 
 static void TranslateFuncNameAndParam(TreeNode* func_node,
                                       IRBlock* func_ir_block,
-                                      IRNameTable* global_nt,
-                                      int64_t* last_global_id) {
+                                      IR* ir) {
   ASSERT(func_node != NULL);
   ASSERT(func_ir_block != NULL);
-  ASSERT(global_nt != NULL);
-  ASSERT(last_global_id != NULL);
+  ASSERT(ir != NULL);
 
   TreeNode* func_name_tnode = func_node->l_child->l_child;
-  int64_t func_id = (*last_global_id)++;
+  int64_t func_id = ir->last_global_id++;
 
   List* ir_nodes_list = func_ir_block->ir_nodes;
 
@@ -166,6 +169,9 @@ static void TranslateFuncNameAndParam(TreeNode* func_node,
   IRNode* func_ir_node = List_AccessData(func_name_lnode);
 
   int64_t n_param = GetNParam(func_node);
+  PRINT_LONG(n_param);
+  func_ir_block->number_of_local_vars += n_param;
+
   *func_ir_node = (IRNode){.dest_id = func_id,
                            .dest_type = kIROperandType_Function,
                            .ir_operator = kIROperator_Func,
@@ -178,7 +184,7 @@ static void TranslateFuncNameAndParam(TreeNode* func_node,
                                                    func_ir_block->local_nt);
 
 //FIXME might contain bug
-  bool is_inserted = IRNameTable_Insert(global_nt,
+  bool is_inserted = IRNameTable_Insert(ir->global_nt,
                                         func_name_tnode->data.idnt.str,
                                         func_name_tnode->data.idnt.len,
                                         func_id,
@@ -192,10 +198,11 @@ static void TranslateFuncNameAndParam(TreeNode* func_node,
 static ListNode* TranslateStatement(TreeNode* st_tnode,
                                     IRBlock* func_ir_block,
                                     ListNode* last_ir_node,
-                                    IRNameTable* global_nt) {
+                                    IR* ir) {
   ASSERT(st_tnode != NULL);
   ASSERT(func_ir_block != NULL);
   ASSERT(last_ir_node != NULL);
+  ASSERT(ir != NULL);
   ASSERT(st_tnode->data.type == kTokenType_TreeSup
          && st_tnode->data.tree_sup == kTreeSup_Statement);
 
@@ -204,7 +211,7 @@ static ListNode* TranslateStatement(TreeNode* st_tnode,
     last_ir_node = TranslateSingleStatement(iter_tnode,
                                             func_ir_block,
                                             last_ir_node,
-                                            global_nt);
+                                            ir);
     iter_tnode = iter_tnode->r_child;
   }
 
@@ -214,10 +221,11 @@ static ListNode* TranslateStatement(TreeNode* st_tnode,
 static ListNode* TranslateSingleStatement(TreeNode* single_st_tnode,
                                           IRBlock* func_ir_block,
                                           ListNode* last_ir_node,
-                                          IRNameTable* global_nt) {
+                                          IR* ir) {
   ASSERT(single_st_tnode != NULL);
   ASSERT(func_ir_block != NULL);
   ASSERT(last_ir_node != NULL);
+  ASSERT(ir != NULL);
 
   ListNode* iter_node = NULL;
 
@@ -226,39 +234,39 @@ static ListNode* TranslateSingleStatement(TreeNode* single_st_tnode,
       iter_node = TranslateVarInit(single_st_tnode,
                                    func_ir_block,
                                    last_ir_node,
-                                   global_nt);
+                                   ir);
       break;
     case kTreeSup_AssignExpr:
       iter_node = TranslateAssignExpr(single_st_tnode,
                                       func_ir_block,
                                       last_ir_node,
-                                      global_nt);
+                                      ir);
       break;
     case kTreeSup_ValueExpr:
       int64_t res_ir_node_unused = 0;
       iter_node = TranslateValueExpr(single_st_tnode,
                                      func_ir_block,
                                      last_ir_node,
-                                     global_nt,
+                                     ir,
                                      &res_ir_node_unused);
       break;
     case kTreeSup_ReturnExpr:
       iter_node = TranslateReturnExpr(single_st_tnode,
                                       func_ir_block,
                                       last_ir_node,
-                                      global_nt);
+                                      ir);
       break;
     case kTreeSup_IfBranch:
       iter_node = TranslateIfBranch(single_st_tnode,
                                      func_ir_block,
                                      last_ir_node,
-                                     global_nt);
+                                     ir);
       break;
     case kTreeSup_WhileLoop:
       iter_node = TranslateWhileLoop(single_st_tnode,
                                      func_ir_block,
                                      last_ir_node,
-                                     global_nt);
+                                     ir);
       break;
     case kTreeSup_Uninit:
     default:
@@ -273,17 +281,18 @@ static ListNode* TranslateSingleStatement(TreeNode* single_st_tnode,
 static ListNode* TranslateVarInit(TreeNode* single_st_tnode,
                                   IRBlock* func_ir_block,
                                   ListNode* last_ir_node,
-                                  IRNameTable* global_nt) {
+                                  IR* ir) {
   ASSERT(single_st_tnode != NULL);
   ASSERT(func_ir_block != NULL);
   ASSERT(last_ir_node != NULL);
+  ASSERT(ir != NULL);
 
   int64_t res_id = 0;
   TreeNode* value_expr_tnode = single_st_tnode->l_child->r_child->r_child;
   last_ir_node = TranslateValueExpr(value_expr_tnode,
                                     func_ir_block,
                                     last_ir_node,
-                                    global_nt,
+                                    ir,
                                     &res_id);
 
   TreeNode* var_name_tnode = single_st_tnode->l_child->l_child->l_child;
@@ -313,10 +322,11 @@ static ListNode* TranslateVarInit(TreeNode* single_st_tnode,
 static ListNode* TranslateAssignExpr(TreeNode* single_st_tnode,
                                      IRBlock* func_ir_block,
                                      ListNode* last_ir_node,
-                                     IRNameTable* global_nt) {
+                                     IR* ir) {
   ASSERT(single_st_tnode != NULL);
   ASSERT(func_ir_block != NULL);
   ASSERT(last_ir_node != NULL);
+  ASSERT(ir != NULL);
 
   TreeNode* var_name = single_st_tnode->l_child;
   TreeNode* value_tnode = single_st_tnode->l_child->l_child->l_child;
@@ -324,7 +334,7 @@ static ListNode* TranslateAssignExpr(TreeNode* single_st_tnode,
   last_ir_node = TranslateValueExpr(value_tnode,
                                     func_ir_block,
                                     last_ir_node,
-                                    global_nt,
+                                    ir,
                                     &res_id_out);
 
   IRName lookup_tmp = {};
@@ -351,34 +361,36 @@ static ListNode* TranslateAssignExpr(TreeNode* single_st_tnode,
 static ListNode* TranslateValueExpr(TreeNode* single_st_tnode,
                                     IRBlock* func_ir_block,
                                     ListNode* last_ir_node,
-                                    IRNameTable* global_nt,
+                                    IR* ir,
                                     int64_t* res_id_out) {
   ASSERT(single_st_tnode != NULL);
   ASSERT(func_ir_block != NULL);
   ASSERT(last_ir_node != NULL);
   ASSERT(res_id_out != NULL);
+  ASSERT(ir != NULL);
 
   return TranslateValueItself(single_st_tnode->l_child,
                               func_ir_block,
                               last_ir_node,
-                              global_nt,
+                              ir,
                               res_id_out);
 }
 
 static ListNode* TranslateReturnExpr(TreeNode* single_st_tnode,
                                      IRBlock* func_ir_block,
                                      ListNode* last_ir_node,
-                                     IRNameTable* global_nt) {
+                                     IR* ir) {
   ASSERT(single_st_tnode != NULL);
   ASSERT(func_ir_block != NULL);
   ASSERT(last_ir_node != NULL);
+  ASSERT(ir != NULL);
 
   TreeNode* value_tnode = single_st_tnode->l_child->l_child;
   int64_t res_id = 0;
   last_ir_node = TranslateValueExpr(value_tnode,
                                     func_ir_block,
                                     last_ir_node,
-                                    global_nt,
+                                    ir,
                                     &res_id);
 
   ListNode* return_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, last_ir_node);
@@ -397,10 +409,11 @@ static ListNode* TranslateReturnExpr(TreeNode* single_st_tnode,
 static ListNode* TranslateIfBranch(TreeNode* if_br_tnode,
                                     IRBlock* func_ir_block,
                                     ListNode* last_ir_node,
-                                    IRNameTable* global_nt) {
+                                    IR* ir) {
   ASSERT(if_br_tnode != NULL);
   ASSERT(func_ir_block != NULL);
   ASSERT(last_ir_node != NULL);
+  ASSERT(ir != NULL);
   ASSERT(if_br_tnode->data.type == kTokenType_TreeSup
          && if_br_tnode->data.tree_sup == kTreeSup_IfBranch);
 
@@ -410,7 +423,8 @@ static ListNode* TranslateIfBranch(TreeNode* if_br_tnode,
   // exit label:
   ListNode* exit_lbl_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, last_ir_node);
   IRNode* exit_lbl_ir_nd = List_AccessData(exit_lbl_lnode);
-  int64_t exit_id = func_ir_block->last_local_id++;
+  // int64_t exit_id = func_ir_block->last_local_id++;
+  int64_t exit_id = ir->last_global_id++;
   *exit_lbl_ir_nd = (IRNode){.dest_id = exit_id,
                              .dest_type = kIROperandType_LabelName,
                              .ir_operator = kIROperator_Label,
@@ -421,7 +435,8 @@ static ListNode* TranslateIfBranch(TreeNode* if_br_tnode,
 
   snprintf(buf_for_str_gen, kMaxCharBufSize, "exit%ld", exit_id);
   size_t exit_name_len = strlen(buf_for_str_gen);
-  is_inserted = IRNameTable_Insert(func_ir_block->local_nt, buf_for_str_gen, exit_name_len, exit_id, kIROperandType_LabelName, 0);
+  // is_inserted = IRNameTable_Insert(func_ir_block->local_nt, buf_for_str_gen, exit_name_len, exit_id, kIROperandType_LabelName, 0);
+  is_inserted = IRNameTable_Insert(ir->global_nt, buf_for_str_gen, exit_name_len, exit_id, kIROperandType_LabelName, 0);
   if (!is_inserted) { ASSERT(0 && ":("); }
 
   // cond:
@@ -431,7 +446,7 @@ static ListNode* TranslateIfBranch(TreeNode* if_br_tnode,
   last_ir_node = TranslateValueExpr(cond_tnode,
                                     func_ir_block,
                                     last_ir_node,
-                                    global_nt,
+                                    ir,
                                     &res_id);
 
   int64_t tmp_id_not_cond = 0;
@@ -447,10 +462,12 @@ static ListNode* TranslateIfBranch(TreeNode* if_br_tnode,
                              .src2_id = 0,
                              .src2_type = kIROperandType_ZeroInit};
 
-  int64_t else_br_label_id = func_ir_block->last_local_id++;
+  // int64_t else_br_label_id = func_ir_block->last_local_id++;
+  int64_t else_br_label_id = ir->last_global_id++;
   snprintf(buf_for_str_gen, kMaxCharBufSize, "out%ld", else_br_label_id);
   size_t else_br_label_len = strlen(buf_for_str_gen);
-  is_inserted = IRNameTable_Insert(func_ir_block->local_nt, buf_for_str_gen, else_br_label_len, else_br_label_id, kIROperandType_LabelName, 0);
+  // is_inserted = IRNameTable_Insert(func_ir_block->local_nt, buf_for_str_gen, else_br_label_len, else_br_label_id, kIROperandType_LabelName, 0);
+  is_inserted = IRNameTable_Insert(ir->global_nt, buf_for_str_gen, else_br_label_len, else_br_label_id, kIROperandType_LabelName, 0);
   if (!is_inserted) { ASSERT(0 && ":("); }
 
   ListNode* jmp_if_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, not_cond_lnode);
@@ -468,7 +485,7 @@ static ListNode* TranslateIfBranch(TreeNode* if_br_tnode,
   ListNode* end_of_statement_lnode = TranslateStatement(statement_if_tnode,
                                                         func_ir_block,
                                                         jmp_if_lnode,
-                                                        global_nt);
+                                                        ir);
 
   ListNode* jmp_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, end_of_statement_lnode);
   IRNode* jmp_ir_nd = List_AccessData(jmp_lnode);
@@ -496,7 +513,7 @@ static ListNode* TranslateIfBranch(TreeNode* if_br_tnode,
     ListNode* end_of_else = TranslateElseBranch(else_branch_tnode,
                                                 func_ir_block,
                                                 else_br_label_lnode,
-                                                global_nt);
+                                                ir);
   }
 
   return exit_lbl_lnode;
@@ -505,10 +522,11 @@ static ListNode* TranslateIfBranch(TreeNode* if_br_tnode,
 static ListNode* TranslateElseBranch(TreeNode* else_br_tnode,
                                      IRBlock* func_ir_block,
                                      ListNode* last_ir_node,
-                                     IRNameTable* global_nt) {
+                                     IR* ir) {
   ASSERT(else_br_tnode != NULL);
   ASSERT(func_ir_block != NULL);
   ASSERT(last_ir_node != NULL);
+  ASSERT(ir != NULL);
   ASSERT(else_br_tnode->data.type == kTokenType_TreeSup
          && (else_br_tnode->data.tree_sup == kTreeSup_ElseIfBranch
              || else_br_tnode->data.tree_sup == kTreeSup_ElseStBranch));
@@ -519,12 +537,12 @@ static ListNode* TranslateElseBranch(TreeNode* else_br_tnode,
     return TranslateIfBranch(else_type_tnode,
                              func_ir_block,
                              last_ir_node,
-                             global_nt);
+                             ir);
   } else if (else_br_tnode->data.tree_sup == kTreeSup_ElseStBranch) {
     return TranslateStatement(else_type_tnode,
                               func_ir_block,
                               last_ir_node,
-                              global_nt);
+                              ir);
   }
 
   ASSERT(0 && "invalid tree");
@@ -535,18 +553,21 @@ static ListNode* TranslateElseBranch(TreeNode* else_br_tnode,
 static ListNode* TranslateWhileLoop(TreeNode* while_loop_tnode,
                                     IRBlock* func_ir_block,
                                     ListNode* last_ir_node,
-                                    IRNameTable* global_nt) {
+                                    IR* ir) {
   ASSERT(while_loop_tnode != NULL);
   ASSERT(func_ir_block != NULL);
   ASSERT(last_ir_node != NULL);
+  ASSERT(ir != NULL);
   ASSERT(while_loop_tnode->data.type == kTokenType_TreeSup
          && while_loop_tnode->data.tree_sup == kTreeSup_WhileLoop);
 
   int64_t lbl_for_check_id = func_ir_block->last_local_id++;
   int64_t lbl_for_to_st_id = func_ir_block->last_local_id++;
   // add to nt
-  AddNameToLocalNT(func_ir_block->local_nt, lbl_for_check_id, "check", kIROperandType_LabelName);
-  AddNameToLocalNT(func_ir_block->local_nt, lbl_for_to_st_id, "while_loop", kIROperandType_LabelName);
+  // AddNameToLocalNT(func_ir_block->local_nt, lbl_for_check_id, "check", kIROperandType_LabelName);
+  // AddNameToLocalNT(func_ir_block->local_nt, lbl_for_to_st_id, "while_loop", kIROperandType_LabelName);
+  AddNameToLocalNT(ir->global_nt, lbl_for_check_id, "check", kIROperandType_LabelName);
+  AddNameToLocalNT(ir->global_nt, lbl_for_to_st_id, "while_loop", kIROperandType_LabelName);
 
   ListNode* jmp_to_check_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, last_ir_node);
   IRNode* jmp_to_check_ir_nd = List_AccessData(jmp_to_check_lnode);
@@ -583,7 +604,7 @@ static ListNode* TranslateWhileLoop(TreeNode* while_loop_tnode,
   last_ir_node = TranslateValueExpr(value_expr_tnode,
                                     func_ir_block,
                                     lbl_for_check_lnode,
-                                    global_nt,
+                                    ir,
                                     &value_id);
 
   ListNode* jmp_if_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, last_ir_node);
@@ -600,7 +621,7 @@ static ListNode* TranslateWhileLoop(TreeNode* while_loop_tnode,
   TranslateStatement(st_tnode,
                      func_ir_block,
                      lbl_for_to_st_lnode,
-                     global_nt);
+                     ir);
 
   return jmp_if_lnode;
 }
@@ -608,11 +629,12 @@ static ListNode* TranslateWhileLoop(TreeNode* while_loop_tnode,
 static ListNode* TranslateValueItself(TreeNode* value_tnode,
                                       IRBlock* func_ir_block,
                                       ListNode* last_ir_node,
-                                      IRNameTable* global_nt,
+                                      IR* ir,
                                       int64_t* res_id_out) {
   ASSERT(value_tnode != NULL);
   ASSERT(func_ir_block != NULL);
-  ASSERT(last_ir_node != NULL);
+  ASSERT(last_ir_node != NULL)
+  ASSERT(ir != NULL);;
   ASSERT(res_id_out != NULL);
 
   if ((value_tnode->data.type == kTokenType_TreeSup)
@@ -620,7 +642,7 @@ static ListNode* TranslateValueItself(TreeNode* value_tnode,
     return TranslateFunctionCall(value_tnode,
                                  func_ir_block,
                                  last_ir_node,
-                                 global_nt,
+                                 ir,
                                  res_id_out);
   }
 
@@ -634,12 +656,12 @@ static ListNode* TranslateValueItself(TreeNode* value_tnode,
     last_ir_node = TranslateValueItself(value_tnode->l_child,
                                         func_ir_block,
                                         last_ir_node,
-                                        global_nt,
+                                        ir,
                                         &id_for_left_res);
     last_ir_node = TranslateValueItself(value_tnode->r_child,
                                         func_ir_block,
                                         last_ir_node,
-                                        global_nt,
+                                        ir,
                                         &id_for_right_res);
   }
 
@@ -686,11 +708,12 @@ static ListNode* TranslateValueItself(TreeNode* value_tnode,
 static ListNode* TranslateFunctionCall(TreeNode* func_call_tnode,
                                        IRBlock* func_ir_block,
                                        ListNode* last_ir_node,
-                                       IRNameTable* global_nt,
+                                       IR* ir,
                                        int64_t* res_id_out) {
   ASSERT(func_call_tnode != NULL);
   ASSERT(func_ir_block != NULL);
   ASSERT(last_ir_node != NULL);
+  ASSERT(ir != NULL);
   ASSERT(res_id_out != NULL);
 
   int64_t call_tmp_id = 0;
@@ -700,7 +723,7 @@ static ListNode* TranslateFunctionCall(TreeNode* func_call_tnode,
   int64_t func_call_id = 0;
   int64_t func_n_param_exp = 0;
   IRName func_call_ir_name = {};
-  bool is_found = IRNameTable_LookUpByStr(global_nt, func_name_tnode->data.idnt.str, func_name_tnode->data.idnt.len, &func_call_ir_name);
+  bool is_found = IRNameTable_LookUpByStr(ir->global_nt, func_name_tnode->data.idnt.str, func_name_tnode->data.idnt.len, &func_call_ir_name);
   if (!is_found) { ASSERT(0 && "cant find such function"); }
   func_call_id = func_call_ir_name.name_id;
   func_n_param_exp = func_call_ir_name.n_param;
@@ -727,7 +750,7 @@ static ListNode* TranslateFunctionCall(TreeNode* func_call_tnode,
 
   int64_t value_id = 0;
   while (iter_param_tnode != NULL) {
-    iter_value_lnode = TranslateValueExpr(iter_param_tnode, func_ir_block, iter_value_lnode, global_nt, &value_id);
+    iter_value_lnode = TranslateValueExpr(iter_param_tnode, func_ir_block, iter_value_lnode, ir, &value_id);
     iter_param_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, iter_param_lnode);
     IRNode* param_ir_nd = List_AccessData(iter_param_lnode);
     *param_ir_nd = (IRNode){.dest_id = func_call_id,
@@ -832,7 +855,7 @@ static ListNode* CreateTmpNode(IRBlock* func_ir_block,
                             .src1_type = kIROperandType_ZeroInit,
                             .src2_id = 0,
                             .src2_type = kIROperandType_ZeroInit};
-
+  func_ir_block->number_of_local_vars++;
   *res_id_out = tmp_id;
   return new_tmp_lnode;
 }

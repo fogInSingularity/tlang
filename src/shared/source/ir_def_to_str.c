@@ -12,7 +12,7 @@ const char* IROperatorToStr(IROperator ir_op) {
       return #op_name_;
 
   switch (ir_op) {
-    #include "ir_operators.h"
+    #include "ir_operators.inc"
     default:
       ASSERT(0 && ":(");
       return "Unknown operator";

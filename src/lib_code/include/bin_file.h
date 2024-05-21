@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdbool.h>
 
 #include "lib_config.h"
 
@@ -15,7 +15,7 @@ typedef struct {
   size_t buf_size;
 } BinData;
 
-void GetData(BinData* data, FILE* file);
+void GetData(BinData* data, FILE* file, bool insert_0);
 void FreeData(BinData* data);
 
 #endif // LIB_BINFILE_H_

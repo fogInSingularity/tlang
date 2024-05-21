@@ -46,8 +46,6 @@ LexicalError Lexer(BinData* data, DArray* token_array) {
   ErrorCounter cnt_rem = RemoveComments(data);
   if (cnt_rem == kRemComms_Failure) { return kLexicalError_Comments; }
 
-  // fprintf(stderr, "%s", data->buf);
-
   ErrorIndex err_ind = kTokenise_Success;
   err_ind = Tokenise(data, token_array);
   if (err_ind != kTokenise_Success) { return kLexicalError_UnknownLex; }
@@ -138,12 +136,9 @@ static ErrorIndex Tokenise(BinData* data, DArray* token_array) {
 
     state = TokenPunctuation(data, token_array, &shift, &debug);
     if (state == kTokenState_Parsed) { continue; }
-
-    // PRINT_CHAR(*(data->buf + shift));
-    // PRINT_ULONG(data->buf_size - shift);
   }
-//FIXME
-  // DArray_Dump(token_array, ArrDump);
+
+  DArray_Dump(token_array, ArrDump);
 
   return kTokenise_Success;
 }
@@ -237,7 +232,7 @@ static TokenState TokenOperator(BinData* data, DArray* token_array,
 #undef OPERATOR
 }
 
-//FIXME
+//NOTE
 static TokenState TokenConst(BinData* data, DArray* token_array,
                              Counter* shift, DebugInfo* debug) {
   ASSERT(data != NULL);
@@ -366,7 +361,7 @@ static TokenState TokenConstNum(BinData* data, DArray* token_array,
 
   *shift += (size_t)(move_str - (data->buf + *shift));
   debug->symbol += (size_t)(move_str - (data->buf + *shift));
-// PRINT_UINT(token.cnst.type);
+
   return kTokenState_Parsed;
 }
 
@@ -463,6 +458,10 @@ static Counter SkipSpaces(BinData* data,
 
 void ArrDump(const void* elem) {
   ASSERT(elem != NULL);
+
+#if !defined(DEBUG)
+  return ;
+#endif // DEBUG
 
   const Token* token = elem;
 

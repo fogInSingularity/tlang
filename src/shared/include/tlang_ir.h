@@ -22,6 +22,7 @@ typedef struct IRBlock {
   List* ir_nodes;
   IRNameTable* local_nt;
   int64_t last_local_id;
+  int64_t number_of_local_vars;
 } IRBlock;
 
 typedef struct IR {

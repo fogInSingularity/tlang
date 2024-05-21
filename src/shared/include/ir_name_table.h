@@ -9,8 +9,6 @@
 
 typedef struct IRNameTable IRNameTable;
 
-// static const int64_t kIRNameTable_CantFindElem = INT64_MIN;
-
 IRNameTable* IRNameTable_Ctor();
 void IRNameTable_Dtor(IRNameTable* name_table);
 

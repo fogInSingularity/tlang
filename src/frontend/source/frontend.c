@@ -2,7 +2,6 @@
 
 #include "file_wraper.h"
 #include "my_assert.h"
-#include "my_typedefs.h"
 #include "debug.h"
 #include "ast_builder.h"
 #include "lexer.h"
@@ -12,20 +11,20 @@
 
 //global-----------------------------------------------------------------------
 
-FrontError FrontCtor(Frontend* front, const CompilerRuntimeConfig* config) {
+FrontendError FrontendCtor(Frontend* front, const CompilerRuntimeConfig* config) {
   ASSERT(front != NULL);
   ASSERT(config != NULL);
 
   front->is_valid = false;
 
-  FILE* source = FOPENW(config->source_filename, "r");
-  if (source == NULL) { return kFrontError_CantOpenSourceFile; }
+  FILE* source = F_OPEN_W(config->source_filename, "r");
+  if (source == NULL) { return kFrontendError_CantOpenSourceFile; }
 
-  GetData(&front->source_data, source);
-  FCLOSEW(source);
+  GetData(&front->source_data, source, true);
+  F_CLOSE_W(source);
 
   DArrayError darr_error = DArray_Ctor(&front->token_array, sizeof(Token), 0);
-  if (darr_error != kDArrayError_Success) { return kFrontError_BadDArrayCtor; }
+  if (darr_error != kDArrayError_Success) { return kFrontendError_BadDArrayCtor; }
 
   TreeCtor(&front->ast, config->output_ast_dot, config->ast_out_dot_filename);
 
@@ -34,10 +33,10 @@ FrontError FrontCtor(Frontend* front, const CompilerRuntimeConfig* config) {
 
   front->is_valid = true;
 
-  return kFrontError_Success;
+  return kFrontendError_Success;
 }
 
-void FrontDtor(Frontend* front) {
+void FrontendDtor(Frontend* front) {
   ASSERT(front != NULL);
 
   FreeData(&front->source_data);
@@ -47,44 +46,47 @@ void FrontDtor(Frontend* front) {
   front->is_valid = false;
 }
 
-void FrontThrowError(FrontError error) {
-  switch (error) { //FIXME
-    case kFrontError_Success:
+void FrontendThrowError(FrontendError error) {
+  switch (error) { // FIXME
+    case kFrontendError_Success:
       /* ok */
       break;
-    case kFrontError_CtorBadAlloc:
-      PRINT_STR(STRINGIFY(kFrontError_CtorBadAlloc));
+    case kFrontendError_CtorBadAlloc:
+      PRINT_STR(STRINGIFY(kFrontendError_CtorBadAlloc));
       break;
-    case kFrontError_CantOpenSourceFile:
-      PRINT_STR(STRINGIFY(kFrontError_CantOpenSourceFile));
+    case kFrontendError_CantOpenSourceFile:
+      PRINT_STR(STRINGIFY(kFrontendError_CantOpenSourceFile));
       break;
-    case kFrontError_BadDArrayCtor:
-      PRINT_STR(STRINGIFY(kFrontError_BadDArrayCtor));
+    case kFrontendError_BadDArrayCtor:
+      PRINT_STR(STRINGIFY(kFrontendError_BadDArrayCtor));
       break;
-    case kFrontError_BadLexAnalyse:
-      PRINT_STR(STRINGIFY(kFrontError_BadLexAnalyse));
+    case kFrontendError_BadLexAnalyse:
+      PRINT_STR(STRINGIFY(kFrontendError_BadLexAnalyse));
       break;
-    case kFrontError_BadAst:
-      PRINT_STR(STRINGIFY(kFrontError_BadAst));
+    case kFrontendError_BadAst:
+      PRINT_STR(STRINGIFY(kFrontendError_BadAst));
       break;
-    case kFrontError_InvalidFront:
-      PRINT_STR(STRINGIFY(kFrontError_InvalidFront));
+    case kFrontendError_InvalidFront:
+      PRINT_STR(STRINGIFY(kFrontendError_InvalidFront));
+      break;
+    default:
+      ASSERT(0 && ":(");
       break;
   }
 }
 
-FrontError FrontPass(Frontend* front, IR* ir) {
+FrontendError FrontendPass(Frontend* front, IR* ir) {
   ASSERT(front != NULL);
 
-  if (!front->is_valid) { return kFrontError_InvalidFront; }
+  if (!front->is_valid) { return kFrontendError_InvalidFront; }
 
   LexicalError lex_error = Lexer(&front->source_data, &front->token_array);
-  if (lex_error != kLexicalError_Success) { return kFrontError_BadLexAnalyse; }
+  if (lex_error != kLexicalError_Success) { return kFrontendError_BadLexAnalyse; }
 
   AstError ast_error = AstBuilder(&front->token_array, &front->ast);
-  if (ast_error != kAstError_Success) { return kFrontError_BadAst; }
+  if (ast_error != kAstError_Success) { return kFrontendError_BadAst; }
 
   TranslateAstToIr(&front->ast, ir);
 
-  return kFrontError_Success;
+  return kFrontendError_Success;
 }

@@ -49,6 +49,10 @@ void DArray_Dtor(DArray* darr) {
 void DArray_Dump(DArray* darr, DumpFunc* DumpElemFunc) {
   ASSERT(darr != NULL);
 
+#if !defined (DEBUG)
+  return ;
+#endif // DEBUG
+
   fprintf(stderr, "# dynamic array [ %p ]\n", darr);
   fprintf(stderr, "# {\n");
   fprintf(stderr, "#   number of elements [ %lu ]\n", darr->n_elem);

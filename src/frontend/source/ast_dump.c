@@ -155,7 +155,7 @@ void DumpAst(const TreeNode* node, const TreeNode* root, FILE* dump_file) {
       }
       fprintf(dump_file,
               "node_%lu [shape = box, style = filled, fillcolor = \"#d9edbf\", label = \" type: tree_sup | %s\"];\n",
-              (size_t)node, tree_sup_option); //FIXME add more info about tree_sup
+              (size_t)node, tree_sup_option); 
       break;
     //----------------------------------------------------------
     case kTokenType_Uninit:

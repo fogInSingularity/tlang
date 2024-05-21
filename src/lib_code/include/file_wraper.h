@@ -5,8 +5,8 @@
 
 #include "lib_config.h"
 
-#define FOPENW(file_name_, modes_) FOpenW(file_name_, modes_, __FILE__, __LINE__, __PRETTY_FUNCTION__)
-#define FCLOSEW(stream_) FCloseW(stream_, __FILE__, __LINE__, __PRETTY_FUNCTION__)
+#define F_OPEN_W(file_name_, modes_) FOpenW (file_name_, modes_, __FILE__, __LINE__, __PRETTY_FUNCTION__)
+#define F_CLOSE_W(stream_)           FCloseW(stream_,            __FILE__, __LINE__, __PRETTY_FUNCTION__)
 
 FILE* FOpenW(const char* file_name,
              const char* modes,
@@ -19,10 +19,20 @@ int FCloseW(FILE* stream,
             const int debug_line,
             const char* debug_func);
 
-//FIXME add macro for raw
 #if defined (__linux__)
-int RawCloseW(int fd);
-int RawOpenW(const char* file_name, int flags);
+#define RAW_OPEN_W(file_name_, flags_) RawOpenW (file_name_, flags_, __FILE__, __LINE__, __PRETTY_FUNCTION__);
+#define RAW_CLOSE_W(fd_)               RawCloseW(fd_,                __FILE__, __LINE__, __PRETTY_FUNCTION__);
+
+int RawOpenW(const char* file_name,
+             int flags,
+             const char* debug_filename,
+             const int debug_line,
+             const char* debug_func);
+
+int RawCloseW(int fd,
+             const char* debug_filename,
+             const int debug_line,
+             const char* debug_func);
 #endif // __linux__
 
 #endif // FILE_WRAPER_H_

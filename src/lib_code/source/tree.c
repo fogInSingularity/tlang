@@ -37,14 +37,14 @@ void TreeDtor(Tree* tree) {
 void TreeDotDump(const Tree* tree, DumpTreeNodeFunc* DumpNode) {
   if (!tree->do_dump) { return ; }
 
-  FILE* dump_file = FOPENW(tree->dump_filename, "w");
+  FILE* dump_file = F_OPEN_W(tree->dump_filename, "w");
   if (dump_file == NULL) { return; }
 
   fprintf(dump_file, "digraph {\n");
   TreeDumpNode(tree->root.r_child, &tree->root, dump_file, DumpNode);
   fprintf(dump_file, "}\n");
 
-  FCLOSEW(dump_file);
+  F_CLOSE_W(dump_file);
 }
 
 TreeNode* TreeCtorNode(TreeElem* data, TreeNode* parent) {

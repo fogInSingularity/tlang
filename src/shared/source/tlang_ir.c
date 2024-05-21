@@ -74,7 +74,7 @@ void IR_Out(IR* ir) {
 
   if (!ir->do_dump) { return ; }
 
-  FILE* out_file = FOPENW(ir->dump_filename, "w");
+  FILE* out_file = F_OPEN_W(ir->dump_filename, "w");
 
   ListNode* iter_node = List_FirstNode(ir->ir_blocks);
   while (iter_node != NULL) {
@@ -83,7 +83,7 @@ void IR_Out(IR* ir) {
     iter_node = List_NextNode(ir->ir_blocks, iter_node);
   }
 
-  FCLOSEW(out_file);
+  F_CLOSE_W(out_file);
 }
 
 // static ----------------------------------------------------------------------
@@ -136,7 +136,6 @@ void IRBlock_Out(IRBlock* ir_block, IR* ir, FILE* out_file) {
   }
 }
 
-//FIXME
 void IRNode_Out(IRNode* ir_node, IRBlock* ir_block, IR* ir, FILE* out_file) {
   ASSERT(ir_node != NULL);
   ASSERT(out_file != NULL);
@@ -194,7 +193,7 @@ static const char* IdToStr(int64_t ir_id,
       return buf_for_gen_strs;
     case kIROperandType_LabelName:
       IRName lookup_tmp = {};
-      bool is_found = IRNameTable_LookUpByValue(ir_nt, ir_id, &lookup_tmp);
+      bool is_found = IRNameTable_LookUpByValue(global_nt, ir_id, &lookup_tmp);
       if (!is_found) { ASSERT(0 && ":("); }
 
       return lookup_tmp.name_str;

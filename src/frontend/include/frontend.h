@@ -20,19 +20,19 @@ typedef struct Frontend {
 } Frontend;
 
 typedef enum {
-  kFrontError_Success            = 0,
-  kFrontError_CtorBadAlloc       = 1,
-  kFrontError_CantOpenSourceFile = 2,
-  kFrontError_BadDArrayCtor      = 3,
-  kFrontError_BadLexAnalyse      = 4,
-  kFrontError_BadAst             = 5,
-  kFrontError_InvalidFront       = 6,
-} FrontError;
+  kFrontendError_Success            = 0,
+  kFrontendError_CtorBadAlloc       = 1,
+  kFrontendError_CantOpenSourceFile = 2,
+  kFrontendError_BadDArrayCtor      = 3,
+  kFrontendError_BadLexAnalyse      = 4,
+  kFrontendError_BadAst             = 5,
+  kFrontendError_InvalidFront       = 6,
+} FrontendError;
 
-FrontError FrontCtor(Frontend* front, const CompilerRuntimeConfig* config);
-void FrontDtor(Frontend* front);
-void FrontThrowError(FrontError error);
+FrontendError FrontendCtor(Frontend* front, const CompilerRuntimeConfig* config);
+void FrontendDtor(Frontend* front);
+void FrontendThrowError(FrontendError error);
 
-FrontError FrontPass(Frontend* front, IR* ir);
+FrontendError FrontendPass(Frontend* front, IR* ir);
 
 #endif // FRONTEND_H_
