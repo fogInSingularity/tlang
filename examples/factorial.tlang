@@ -1,5 +1,6 @@
 fn Factorial(num: i64): i64 {
-  if (num == 0 || num == 1) {
+  // if (num == 0 || num == 1) {
+  if (num == 1) {
     return 1;
   } else {
     return num * Factorial(num - 1);

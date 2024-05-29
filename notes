@@ -14,3 +14,20 @@ right = red
 calling convention:
   args throw the stack
   return value on top of the args
+
+flags:
+  --ast-dump=<file_name>
+  --ir-dump=<file_name>
+  --asm_dump=<file_name>   -S
+  --march=<arch_name>      -m
+  --exe-name               -o
+  --source-file            -c
+  --skip-frontend
+  --skip-middleend
+  --skip-backend
+
+./tlang_compiler --source-file=examples/factorial2_0.tlang --ir-dump=dump_ir --ast-dump=dump_tree.dot --asm-dump=dump.asm --march=x86-64 --exe-name=my_prog 2>log
+./tlang_compiler --source-file=examples/factorial.tlang --asm-dump=dump.asm --march=x86-64 2>log
+
+nasm dump.asm -f elf64 -o my_prog.o
+ld -o my_prog my_prog.o -g

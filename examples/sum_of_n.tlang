@@ -1,0 +1,10 @@
+fn sum(num: i64): i64 {
+  let n: i64 = 0;
+  
+  while (num != 0) {
+    n = n + num;
+    num = num - 1;
+  }
+
+  return n;
+}
