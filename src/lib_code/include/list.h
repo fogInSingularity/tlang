@@ -15,6 +15,7 @@ typedef struct ListNode ListNode;
 
 List* List_Ctor(const size_t elem_size);
 int64_t List_Dtor(List* list); // invalidates list
+int64_t List_DtorFull(List* list); // invalidates list
 
 ListNode* List_NextNode(const List* list, const ListNode* node);
 ListNode* List_PrevNode(const List* list, const ListNode* node);

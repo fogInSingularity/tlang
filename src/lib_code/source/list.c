@@ -57,7 +57,7 @@ List* List_Ctor(const size_t elem_size) {
 }
 
 int64_t List_Dtor(List* list) {
-  ASSERT(list == NULL);
+  ASSERT(list != NULL);
 
   int64_t nodes_remaind = list->n_nodes;
 
@@ -66,6 +66,19 @@ int64_t List_Dtor(List* list) {
   free(list);
 
   return nodes_remaind;
+}
+
+int64_t List_DtorFull(List* list) {
+  ASSERT(list != NULL);
+
+  ListNode* remove_nd = List_FirstNode(list);
+  while (remove_nd != NULL) {
+    List_RemoveNode(list, remove_nd);
+
+    remove_nd = List_FirstNode(list);
+  }
+
+  return List_Dtor(list);
 }
 
 ListNode* List_NextNode(const List* list, const ListNode* node) {

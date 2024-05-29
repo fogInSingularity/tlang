@@ -514,6 +514,7 @@ static ListNode* TranslateIfBranch(TreeNode* if_br_tnode,
                                                 func_ir_block,
                                                 else_br_label_lnode,
                                                 ir);
+    (void)end_of_else;
   }
 
   return exit_lbl_lnode;

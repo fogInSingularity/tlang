@@ -33,7 +33,18 @@ IRNameTable* IRNameTable_Ctor() {
 }
 
 void IRNameTable_Dtor(IRNameTable* name_table) {
-  //FIXME
+  ASSERT(name_table != NULL);
+
+  ListNode* iter_list = List_FirstNode(name_table->name_list);
+  while (iter_list != NULL) {
+    IRName* ir_name = List_AccessData(iter_list);
+    free(ir_name->name_str);
+
+    iter_list = List_NextNode(name_table->name_list, iter_list);
+  }
+
+  List_DtorFull(name_table->name_list);
+  name_table->name_list = NULL;
 }
 
 void IRNameTable_Dump(IRNameTable* name_table) {

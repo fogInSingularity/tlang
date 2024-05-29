@@ -36,6 +36,8 @@ typedef struct IR {
 
 // inits IR, IRBlocks should be inited separetly
 IR* IR_Ctor(bool do_dump, const char* dump_filename);
+void IR_Dtor(IR* ir);
+
 void IR_Dump(IR* ir);
 void IR_Out(IR* ir);
 

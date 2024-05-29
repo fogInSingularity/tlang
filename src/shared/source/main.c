@@ -25,6 +25,7 @@ int main(const int argc, char* const* argv) {
   }
 
   if (config.do_middle_pass) {}
+
   if (config.do_back_pass) {
     BackendError error = kBackendError_Success;
     Backend backend = {};
@@ -40,6 +41,8 @@ int main(const int argc, char* const* argv) {
   }
 
   IR_Out(ir);
+
+  IR_Dtor(ir);
 
   return 0;
 }

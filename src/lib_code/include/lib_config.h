@@ -1,7 +1,7 @@
 #ifndef LIB_lib_config_H_
 #define LIB_lib_config_H_
 
-// #define COLOR_ON
+#define COLOR_ON
 
 #if defined (DEBUG)
 #define SINGLE_DOLLAR_ON 1

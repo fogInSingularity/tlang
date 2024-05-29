@@ -10,7 +10,7 @@
 // macro -----------------------------------------------------------------------
 
 #define dump_print(...) fprintf(stderr, __VA_ARGS__);
-#define kMaxBufSize 30
+#define kMaxBufSize 32
 
 // static ----------------------------------------------------------------------
 
@@ -37,7 +37,7 @@ IR* IR_Ctor(bool do_dump, const char* dump_filename) {
 
   new_ir->global_nt = IRNameTable_Ctor();
   if (new_ir->global_nt == NULL) {
-    List_Dtor(new_ir->ir_blocks);
+    List_DtorFull(new_ir->ir_blocks);
     free(new_ir);
   }
 
@@ -46,6 +46,29 @@ IR* IR_Ctor(bool do_dump, const char* dump_filename) {
   new_ir->dump_filename = dump_filename;
 
   return new_ir;
+}
+
+void IR_Dtor(IR* ir) {
+  ASSERT(ir != NULL);
+
+  ir->dump_filename = NULL;
+  ir->do_dump = false;
+  ir->last_global_id = 0;
+
+  IRNameTable_Dtor(ir->global_nt);
+  ir->global_nt = NULL;
+
+  ListNode* iter_blocks = List_FirstNode(ir->ir_blocks);
+  while (iter_blocks != NULL) {
+    IRBlock* ir_block = List_AccessData(iter_blocks);
+
+    List_DtorFull(ir_block->ir_nodes);
+    IRNameTable_Dtor(ir_block->local_nt);
+
+    iter_blocks = List_NextNode(ir->ir_blocks, iter_blocks);
+  }
+
+  List_DtorFull(ir->ir_blocks);
 }
 
 void IR_Dump(IR* ir) {
