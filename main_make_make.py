@@ -1,10 +1,12 @@
 # sep_str = "# ------------------------------------------------------------------------------\n"
 
-clean_cmd = "rm src/frontend/build/* src/lib_code/build/* src/shared/build/*"
+clean_cmd = "rm src/frontend/build/* src/lib_code/build/* src/shared/build/* src/backend_general/build/* src/x86_64_backend/build/*"
 
 main_make_str = """
+AST_DOT_FILE ?= dump_tree.dot
+
 all:
-\t@echo 'available options> release_front debug_front release_mid debug_mid release_back debug_back clean'
+\t@echo 'available options> release debug clean'
 
 release:
 \t@echo 'Compiler $(CC)'
@@ -17,5 +19,5 @@ clean:
 \t{}
 
 dot_compile:
-	@dot dump_tree.dot -Tpng -o dump_tree.png
+	@dot $(AST_DOT_FILE) -Tpng -o dump_tree.png
 """.format(clean_cmd)
