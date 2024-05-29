@@ -1,10 +1,18 @@
-fn sum(num: i64): i64 {
+fn SumOfN(num: i64): i64 {
   let n: i64 = 0;
-  
+
   while (num != 0) {
     n = n + num;
     num = num - 1;
   }
 
   return n;
+}
+
+fn Main(): i64 {
+  let n: i64 = InputI64();
+  let sum: i64 = SumOfN(n);
+  let q: i64 = 0;
+  q = OutputI64(sum);
+  q = Exit();
 }

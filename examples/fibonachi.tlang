@@ -5,3 +5,11 @@ fn Fibonachi(num: i64): i64 {
 
   return Fibonachi(num - 1) + Fibonachi(num - 2);
 }
+
+fn Main(): i64 {
+  let n: i64 = InputI64();
+  let fib: i64 = Fibonachi(n);
+  let q: i64 = 0;
+  q = OutputI64(fib);
+  q = Exit();
+}
