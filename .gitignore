@@ -2,7 +2,9 @@ dump_tree.dot
 dump_tree.png
 logs.log
 log
-ir
+dump_ir
+dump.asm
+my_prog
 tree_store
 tlang_compiler
 
