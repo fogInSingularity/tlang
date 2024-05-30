@@ -18,22 +18,38 @@ typedef enum TokenState {
 
 static ErrorCounter RemoveComments(BinData* data);
 static ErrorIndex Tokenise(BinData* data, DArray* token_array);
-static TokenState TokenKeyword(BinData* data, DArray* token_array,
-                               Counter* shift, DebugInfo* debug);
-static TokenState TokenIdentifier(BinData* data, DArray* token_array,
-                                  Counter* shift, DebugInfo* debug);
-static TokenState TokenOperator(BinData* data, DArray* token_array,
-                                Counter* shift, DebugInfo* debug);
-static TokenState TokenConst(BinData* data, DArray* token_array,
-                             Counter* shift, DebugInfo* debug);
-static TokenState TokenConstChar(BinData* data, DArray* token_array,
-                                 Counter* shift, DebugInfo* debug);
-static TokenState TokenConstNum(BinData* data, DArray* token_array,
-                                Counter* shift, DebugInfo* debug);
-static TokenState TokenStrLit(BinData* data, DArray* token_array,
-                              Counter* shift, DebugInfo* debug);
-static TokenState TokenPunctuation(BinData* data, DArray* token_array,
-                                   Counter* shift, DebugInfo* debug);
+static TokenState TokenKeyword(BinData* data,
+                               DArray* token_array,
+                               Counter* shift,
+                               DebugInfo* debug);
+static TokenState TokenIdentifier(BinData* data,
+                                  DArray* token_array,
+                                  Counter* shift,
+                                  DebugInfo* debug);
+static TokenState TokenOperator(BinData* data,
+                                DArray* token_array,
+                                Counter* shift,
+                                DebugInfo* debug);
+static TokenState TokenConst(BinData* data,
+                             DArray* token_array,
+                             Counter* shift,
+                             DebugInfo* debug);
+static TokenState TokenConstChar(BinData* data,
+                                 DArray* token_array,
+                                 Counter* shift,
+                                 DebugInfo* debug);
+static TokenState TokenConstNum(BinData* data,
+                                DArray* token_array,
+                                Counter* shift,
+                                DebugInfo* debug);
+static TokenState TokenStrLit(BinData* data,
+                              DArray* token_array,
+                              Counter* shift,
+                              DebugInfo* debug);
+static TokenState TokenPunctuation(BinData* data,
+                                   DArray* token_array,
+                                   Counter* shift,
+                                   DebugInfo* debug);
 static Counter SkipSpaces(BinData* data, Counter* shift, DebugInfo* debug);
 void ArrDump(const void* elem);
 
@@ -143,8 +159,10 @@ static ErrorIndex Tokenise(BinData* data, DArray* token_array) {
   return kTokenise_Success;
 }
 
-static TokenState TokenKeyword(BinData* data, DArray* token_array,
-                               Counter* shift, DebugInfo* debug) {
+static TokenState TokenKeyword(BinData* data,
+                               DArray* token_array,
+                               Counter* shift,
+                               DebugInfo* debug) {
   ASSERT(data != NULL);
   ASSERT(token_array != NULL);
   ASSERT(shift != NULL);
@@ -164,7 +182,7 @@ static TokenState TokenKeyword(BinData* data, DArray* token_array,
     return kTokenState_Parsed; \
   } else
 
-#include "tlang_key_words.h"
+#include "tlang_key_words.inc"
 
   /* else */ {
     return kTokenState_Skip;
@@ -173,8 +191,10 @@ static TokenState TokenKeyword(BinData* data, DArray* token_array,
 #undef KEY_WORD
 }
 
-static TokenState TokenIdentifier(BinData* data, DArray* token_array,
-                                  Counter* shift, DebugInfo* debug) {
+static TokenState TokenIdentifier(BinData* data,
+                                  DArray* token_array,
+                                  Counter* shift,
+                                  DebugInfo* debug) {
   ASSERT(data != NULL);
   ASSERT(token_array != NULL);
   ASSERT(shift != NULL);
@@ -202,8 +222,10 @@ static TokenState TokenIdentifier(BinData* data, DArray* token_array,
   return kTokenState_Parsed;
 }
 
-static TokenState TokenOperator(BinData* data, DArray* token_array,
-                                Counter* shift, DebugInfo* debug) {
+static TokenState TokenOperator(BinData* data,
+                                DArray* token_array,
+                                Counter* shift,
+                                DebugInfo* debug) {
   ASSERT(data != NULL);
   ASSERT(token_array != NULL);
   ASSERT(shift != NULL);
@@ -223,7 +245,7 @@ static TokenState TokenOperator(BinData* data, DArray* token_array,
     return kTokenState_Parsed; \
   } else
 
-#include "tlang_operators.h"
+#include "tlang_operators.inc"
 
   /* else */ {
     return kTokenState_Skip;
@@ -233,8 +255,10 @@ static TokenState TokenOperator(BinData* data, DArray* token_array,
 }
 
 //NOTE
-static TokenState TokenConst(BinData* data, DArray* token_array,
-                             Counter* shift, DebugInfo* debug) {
+static TokenState TokenConst(BinData* data,
+                             DArray* token_array,
+                             Counter* shift,
+                             DebugInfo* debug) {
   ASSERT(data != NULL);
   ASSERT(token_array != NULL);
   ASSERT(shift != NULL);
@@ -251,8 +275,10 @@ static TokenState TokenConst(BinData* data, DArray* token_array,
   }
 }
 
-static TokenState TokenConstChar(BinData* data, DArray* token_array,
-                                 Counter* shift, DebugInfo* debug) {
+static TokenState TokenConstChar(BinData* data,
+                                 DArray* token_array,
+                                 Counter* shift,
+                                 DebugInfo* debug) {
   ASSERT(data != NULL);
   ASSERT(token_array != NULL);
   ASSERT(shift != NULL);
@@ -266,30 +292,14 @@ static TokenState TokenConstChar(BinData* data, DArray* token_array,
   if (*move_str == '\\') {
     move_str++;
     switch (*move_str) {
-      case '0':
-        cnst.char_cnst = '\0';
-        break;
-      case 'a':
-        cnst.char_cnst = '\a';
-        break;
-      case 'b':
-        cnst.char_cnst = '\b';
-        break;
-      case 't':
-        cnst.char_cnst = '\t';
-        break;
-      case 'n':
-        cnst.char_cnst = '\n';
-        break;
-      case 'v':
-        cnst.char_cnst = '\v';
-        break;
-      case 'f':
-        cnst.char_cnst = '\f';
-        break;
-      case 'r':
-        cnst.char_cnst = '\r';
-        break;
+      case '0': cnst.char_cnst = '\0'; break;
+      case 'a': cnst.char_cnst = '\a'; break;
+      case 'b': cnst.char_cnst = '\b'; break;
+      case 't': cnst.char_cnst = '\t'; break;
+      case 'n': cnst.char_cnst = '\n'; break;
+      case 'v': cnst.char_cnst = '\v'; break;
+      case 'f': cnst.char_cnst = '\f'; break;
+      case 'r': cnst.char_cnst = '\r'; break;
       default:
         return kTokenState_Skip;
         break;
@@ -315,8 +325,10 @@ static TokenState TokenConstChar(BinData* data, DArray* token_array,
   return kTokenState_Parsed;
 }
 
-static TokenState TokenConstNum(BinData* data, DArray* token_array,
-                                Counter* shift, DebugInfo* debug) {
+static TokenState TokenConstNum(BinData* data,
+                                DArray* token_array,
+                                Counter* shift,
+                                DebugInfo* debug) {
   ASSERT(data != NULL);
   ASSERT(token_array != NULL);
   ASSERT(shift != NULL);
@@ -365,8 +377,10 @@ static TokenState TokenConstNum(BinData* data, DArray* token_array,
   return kTokenState_Parsed;
 }
 
-static TokenState TokenStrLit(BinData* data, DArray* token_array,
-                              Counter* shift, DebugInfo* debug) {
+static TokenState TokenStrLit(BinData* data,
+                              DArray* token_array,
+                              Counter* shift,
+                              DebugInfo* debug) {
   ASSERT(data != NULL);
   ASSERT(token_array != NULL);
   ASSERT(shift != NULL);
@@ -405,8 +419,10 @@ static TokenState TokenStrLit(BinData* data, DArray* token_array,
   return kTokenState_Parsed;
 }
 
-static TokenState TokenPunctuation(BinData* data, DArray* token_array,
-                                   Counter* shift, DebugInfo* debug) {
+static TokenState TokenPunctuation(BinData* data,
+                                   DArray* token_array,
+                                   Counter* shift,
+                                   DebugInfo* debug) {
   ASSERT(data != NULL);
   ASSERT(token_array != NULL);
   ASSERT(shift != NULL);
@@ -426,7 +442,7 @@ static TokenState TokenPunctuation(BinData* data, DArray* token_array,
     return kTokenState_Parsed; \
   } else
 
-#include "tlang_punctuation.h"
+#include "tlang_punctuation.inc"
 
   /* else */ {
     return kTokenState_Skip;
@@ -466,7 +482,10 @@ void ArrDump(const void* elem) {
   const Token* token = elem;
 
   fprintf(stderr, "[ type %u ]", token->type);
-  fprintf(stderr, "[ line %lu, symbol %lu ]", token->debug.line, token->debug.symbol);
+  fprintf(stderr,
+          "[ line %lu, symbol %lu ]",
+          token->debug.line,
+          token->debug.symbol);
   switch (token->type) {
     case kTokenType_KeyWord:
       fprintf(stderr, "[ %u ]", token->key_word);

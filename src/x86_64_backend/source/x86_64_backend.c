@@ -9,7 +9,7 @@
 #include "debug.h"
 #include "backend.h"
 #include "file_wraper.h"
-#include "io64lib.h"
+#include "special_names.h"
 
 // types and def ---------------------------------------------------------------
 
@@ -88,7 +88,7 @@ static void DumpAsm(List* asm_list, const char* dump_filename) {
   ASSERT(dump_filename != NULL);
 
   FILE* dump_file = F_OPEN_W(dump_filename, "w");
-  ASSERT(dump_file != NULL); // FIXME
+  ASSERT(dump_file != NULL);
 
   ListNode* iter_asm = List_FirstNode(asm_list);
   while (iter_asm != NULL) {

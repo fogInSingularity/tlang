@@ -1,9 +1,10 @@
 #ifndef TREE_H_
 #define TREE_H_
 
+#include <stdio.h>
+
 #include "my_typedefs.h"
 #include "token_def.h"
-#include "debug.h"
 
 typedef Token TreeElem;
 

@@ -4,6 +4,5 @@
 static const char* kInputI64  = "InputI64";
 static const char* kOutputI64 = "OutputI64";
 static const char* kExit      = "Exit";
-static const char* kStart     = "_start:";
 
 #endif // IO64LIB_H_

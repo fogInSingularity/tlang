@@ -9,7 +9,8 @@
 
 // static ----------------------------------------------------------------------
 
-static TargetArchitectureId ParseTargetArchitecture(Backend* backend, const char* target_architecture_name);
+static TargetArchitectureId ParseTargetArchitecture(Backend* backend,
+                                                    const char* target_architecture_name);
 
 // global ----------------------------------------------------------------------
 
@@ -58,12 +59,15 @@ void BackendThrowError(BackendError error) {
 }
 
 BackendError BackendRun(Backend* backend, IR* ir) {
+  if (backend->TranslateFromIRToTarget == NULL) { ASSERT(0 && "unsupported"); }
   return backend->TranslateFromIRToTarget(backend, ir);
 }
 
 // static ----------------------------------------------------------------------
 
-static TargetArchitectureId ParseTargetArchitecture(Backend* backend, const char* target_architecture_name) {
+static TargetArchitectureId ParseTargetArchitecture(Backend* backend,
+                                                    const char* target_architecture_name) {
+  ASSERT(target_architecture_name != NULL);
   ASSERT(target_architecture_name != NULL);
 
   const ArchDefinition* arch_def = arch_list;

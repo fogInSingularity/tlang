@@ -63,9 +63,18 @@ void IRNameTable_Dump(IRNameTable* name_table) {
   while (iter_nt != NULL) {
     IRName* iter_elem = List_AccessData(iter_nt);
     if (iter_elem->name_type != kIROperandType_Function) {
-      fprintf(stderr, "#   [ %s ]: [ %ld ][ %s ]\n", iter_elem->name_str, iter_elem->name_id, IROperandTypeToStr(iter_elem->name_type));
+      fprintf(stderr,
+              "#   [ %s ]: [ %ld ][ %s ]\n",
+              iter_elem->name_str,
+              iter_elem->name_id,
+              IROperandTypeToStr(iter_elem->name_type));
     } else {
-      fprintf(stderr, "#   [ %s ]: [ %ld ][ %s ][ %ld ]\n", iter_elem->name_str, iter_elem->name_id, IROperandTypeToStr(iter_elem->name_type), iter_elem->n_param);
+      fprintf(stderr,
+              "#   [ %s ]: [ %ld ][ %s ][ %ld ]\n",
+              iter_elem->name_str,
+              iter_elem->name_id,
+              IROperandTypeToStr(iter_elem->name_type),
+              iter_elem->n_param);
     }
 
     iter_nt = List_NextNode(name_table->name_list, iter_nt);
@@ -158,7 +167,3 @@ bool IRNameTable_LookUpByValue(IRNameTable* name_table,
     return false;
   }
 }
-
-// void IRNameTable_Remove(IRNameTable* name_table, const char* str, size_t len) {
-//   // FIXME
-// }

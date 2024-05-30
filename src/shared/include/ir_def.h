@@ -16,7 +16,7 @@ typedef enum IROperator {
 } IROperator;
 
 typedef enum IROperandType {
-  kIROperandType_Uninit   = 0,
+  kIROperandType_Uninit    = 0,
 
   kIROperandType_Const     = 1,
   kIROperandType_Variable  = 2,

@@ -1,5 +1,9 @@
 #include "ast_dump.h"
 
+#include "my_assert.h"
+#include "utils.h"
+#include "debug.h"
+
 void DumpAst(const TreeNode* node, const TreeNode* root, FILE* dump_file) {
   ASSERT(dump_file != NULL);
 
@@ -18,7 +22,7 @@ void DumpAst(const TreeNode* node, const TreeNode* root, FILE* dump_file) {
           break;
 
       switch (node->data.key_word) {
-        #include "tlang_key_words.h"
+        #include "tlang_key_words.inc"
         default:
           ASSERT(0 && ":(");
           break;
@@ -54,7 +58,7 @@ void DumpAst(const TreeNode* node, const TreeNode* root, FILE* dump_file) {
           break;
 
       switch (node->data.op) {
-        #include "tlang_operators.h"
+        #include "tlang_operators.inc"
         default:
           ASSERT(0 && ":(");
           break;
@@ -76,7 +80,7 @@ void DumpAst(const TreeNode* node, const TreeNode* root, FILE* dump_file) {
           break;
 
       switch (node->data.punc) {
-        #include "tlang_punctuation.h"
+        #include "tlang_punctuation.inc"
         default:
           ASSERT(0 && ":(");
           break;
@@ -155,7 +159,7 @@ void DumpAst(const TreeNode* node, const TreeNode* root, FILE* dump_file) {
       }
       fprintf(dump_file,
               "node_%lu [shape = box, style = filled, fillcolor = \"#d9edbf\", label = \" type: tree_sup | %s\"];\n",
-              (size_t)node, tree_sup_option); 
+              (size_t)node, tree_sup_option);
       break;
     //----------------------------------------------------------
     case kTokenType_Uninit:

@@ -80,7 +80,6 @@ void IR_Dump(IR* ir) {
 
   dump_print("# IR [ %p ]\n", ir);
   dump_print("# global_nt [ %p ]\n", ir->global_nt)
-  // dump_print("# {\n");
 
   ListNode* iter_node = List_FirstNode(ir->ir_blocks);
   while (iter_node != NULL) {
@@ -88,8 +87,6 @@ void IR_Dump(IR* ir) {
     IRBlock_Dump(ir_block);
     iter_node = List_NextNode(ir->ir_blocks, iter_node);
   }
-
-  // dump_print("# }\n");
 }
 
 void IR_Out(IR* ir) {
@@ -116,7 +113,6 @@ static void IRBlock_Dump(IRBlock* ir_block) {
 
   dump_print("#   IRBlock [ %p ]\n", ir_block);
   dump_print("#   local_nt [ %p ]\n", ir_block->local_nt);
-  // dump_print("#   {\n")
 
   ListNode* iter_node = List_FirstNode(ir_block->ir_nodes);
   while (iter_node != NULL) {
@@ -124,15 +120,12 @@ static void IRBlock_Dump(IRBlock* ir_block) {
     IRNode_Dump(ir_node);
     iter_node = List_NextNode(ir_block->ir_nodes, iter_node);
   }
-
-  // dump_print("#   }\n")
 }
 
 static void IRNode_Dump(IRNode* ir_node) {
   ASSERT(ir_node != NULL);
 
   dump_print("#     IRNode [ %p ]\n", ir_node);
-  // dump_print("#     {\n")
   dump_print("#       dest_id [ %ld ][ %s ]\n",
              ir_node->dest_id,
              IROperandTypeToStr(ir_node->dest_type));
@@ -144,7 +137,6 @@ static void IRNode_Dump(IRNode* ir_node) {
   dump_print("#       src2_id [ %ld ][ %s ]\n",
              ir_node->src2_id,
              IROperandTypeToStr(ir_node->src2_type));
-  // dump_print("#     }\n")
 }
 
 void IRBlock_Out(IRBlock* ir_block, IR* ir, FILE* out_file) {

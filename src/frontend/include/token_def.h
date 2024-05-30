@@ -43,7 +43,7 @@ typedef enum KeyWord {
 #define KEY_WORD(kw_id_, kw_, enum_name_) \
   enum_name_ = kw_id_,
 
-#include "tlang_key_words.h"
+#include "tlang_key_words.inc"
 
 #undef KEY_WORD
 } KeyWord;
@@ -52,7 +52,7 @@ typedef enum Operator {
 #define OPERATOR(op_id_, op_, enum_name_) \
   enum_name_ = op_id_,
 
-#include "tlang_operators.h"
+#include "tlang_operators.inc"
 
 #undef OPERATOR
 } Operator;
@@ -61,7 +61,7 @@ typedef enum Punctuation {
 #define PUNCTUATION(punc_id_, punc_, enum_name_) \
   enum_name_ = punc_id_,
 
-#include "tlang_punctuation.h"
+#include "tlang_punctuation.inc"
 
 #undef PUNCTUATION
 } Punctuation;

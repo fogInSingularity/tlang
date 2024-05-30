@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 #include "my_assert.h"
+#include "debug.h"
 
 #include "io64lib.h"
 
@@ -109,9 +110,24 @@ IR* TranslateAstToIr(Tree* ast, IR* ir) {
 
   TreeNode* iter_node = ast->root.r_child;
 
-  IRNameTable_Insert(ir->global_nt, kInputI64, strlen(kInputI64), ir->last_global_id++, kIROperandType_Function, 0);
-  IRNameTable_Insert(ir->global_nt, kOutputI64, strlen(kOutputI64), ir->last_global_id++, kIROperandType_Function, 1);
-  IRNameTable_Insert(ir->global_nt, kExit, strlen(kExit), ir->last_global_id++, kIROperandType_Function, 0);
+  IRNameTable_Insert(ir->global_nt,
+                     kInputI64,
+                     strlen(kInputI64),
+                     ir->last_global_id++,
+                     kIROperandType_Function,
+                     0);
+  IRNameTable_Insert(ir->global_nt,
+                     kOutputI64,
+                     strlen(kOutputI64),
+                     ir->last_global_id++,
+                     kIROperandType_Function,
+                     1);
+  IRNameTable_Insert(ir->global_nt,
+                     kExit,
+                     strlen(kExit),
+                     ir->last_global_id++,
+                     kIROperandType_Function,
+                     0);
 
   while (iter_node != NULL) {
     TranslateFunctionToIrBlock(iter_node, ir);
@@ -183,7 +199,6 @@ static void TranslateFuncNameAndParam(TreeNode* func_node,
   func_ir_block->last_local_id = AddParamToLocalNT(func_node,
                                                    func_ir_block->local_nt);
 
-//FIXME might contain bug
   bool is_inserted = IRNameTable_Insert(ir->global_nt,
                                         func_name_tnode->data.idnt.str,
                                         func_name_tnode->data.idnt.len,
@@ -342,10 +357,11 @@ static ListNode* TranslateAssignExpr(TreeNode* single_st_tnode,
                                           var_name->data.idnt.str,
                                           var_name->data.idnt.len,
                                           &lookup_tmp);
-  if (!is_found) { ASSERT(0 && ":("); } //FIXME
+  if (!is_found) { ASSERT(0 && "Unknown variable encoutered"); } //FIXME
   int64_t var_id = lookup_tmp.name_id;
 
-  ListNode* assign_ir_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, last_ir_node);
+  ListNode* assign_ir_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes,
+                                                 last_ir_node);
   IRNode* assign_ir_nd = List_AccessData(assign_ir_lnode);
   *assign_ir_nd = (IRNode){.dest_id = var_id,
                            .dest_type = kIROperandType_Variable,
@@ -366,8 +382,8 @@ static ListNode* TranslateValueExpr(TreeNode* single_st_tnode,
   ASSERT(single_st_tnode != NULL);
   ASSERT(func_ir_block != NULL);
   ASSERT(last_ir_node != NULL);
-  ASSERT(res_id_out != NULL);
   ASSERT(ir != NULL);
+  ASSERT(res_id_out != NULL);
 
   return TranslateValueItself(single_st_tnode->l_child,
                               func_ir_block,
@@ -393,7 +409,8 @@ static ListNode* TranslateReturnExpr(TreeNode* single_st_tnode,
                                     ir,
                                     &res_id);
 
-  ListNode* return_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, last_ir_node);
+  ListNode* return_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes,
+                                              last_ir_node);
   IRNode* return_ir_nd = List_AccessData(return_lnode);
   *return_ir_nd = (IRNode){.dest_id = res_id,
                            .dest_type = kIROperandType_Variable,
@@ -421,9 +438,9 @@ static ListNode* TranslateIfBranch(TreeNode* if_br_tnode,
   bool is_inserted = false;
 
   // exit label:
-  ListNode* exit_lbl_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, last_ir_node);
+  ListNode* exit_lbl_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes,
+                                                last_ir_node);
   IRNode* exit_lbl_ir_nd = List_AccessData(exit_lbl_lnode);
-  // int64_t exit_id = func_ir_block->last_local_id++;
   int64_t exit_id = ir->last_global_id++;
   *exit_lbl_ir_nd = (IRNode){.dest_id = exit_id,
                              .dest_type = kIROperandType_LabelName,
@@ -435,8 +452,12 @@ static ListNode* TranslateIfBranch(TreeNode* if_br_tnode,
 
   snprintf(buf_for_str_gen, kMaxCharBufSize, "exit%ld", exit_id);
   size_t exit_name_len = strlen(buf_for_str_gen);
-  // is_inserted = IRNameTable_Insert(func_ir_block->local_nt, buf_for_str_gen, exit_name_len, exit_id, kIROperandType_LabelName, 0);
-  is_inserted = IRNameTable_Insert(ir->global_nt, buf_for_str_gen, exit_name_len, exit_id, kIROperandType_LabelName, 0);
+  is_inserted = IRNameTable_Insert(ir->global_nt,
+                                   buf_for_str_gen,
+                                   exit_name_len,
+                                   exit_id,
+                                   kIROperandType_LabelName,
+                                   0);
   if (!is_inserted) { ASSERT(0 && ":("); }
 
   // cond:
@@ -452,7 +473,8 @@ static ListNode* TranslateIfBranch(TreeNode* if_br_tnode,
   int64_t tmp_id_not_cond = 0;
   last_ir_node = CreateTmpNode(func_ir_block, last_ir_node, &tmp_id_not_cond);
 
-  ListNode* not_cond_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, last_ir_node);
+  ListNode* not_cond_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes,
+                                                last_ir_node);
   IRNode* not_cond_ir_nd = List_AccessData(not_cond_lnode);
   *not_cond_ir_nd = (IRNode){.dest_id = tmp_id_not_cond,
                              .dest_type = kIROperandType_Variable,
@@ -462,12 +484,16 @@ static ListNode* TranslateIfBranch(TreeNode* if_br_tnode,
                              .src2_id = 0,
                              .src2_type = kIROperandType_ZeroInit};
 
-  // int64_t else_br_label_id = func_ir_block->last_local_id++;
   int64_t else_br_label_id = ir->last_global_id++;
   snprintf(buf_for_str_gen, kMaxCharBufSize, "out%ld", else_br_label_id);
   size_t else_br_label_len = strlen(buf_for_str_gen);
-  // is_inserted = IRNameTable_Insert(func_ir_block->local_nt, buf_for_str_gen, else_br_label_len, else_br_label_id, kIROperandType_LabelName, 0);
-  is_inserted = IRNameTable_Insert(ir->global_nt, buf_for_str_gen, else_br_label_len, else_br_label_id, kIROperandType_LabelName, 0);
+
+  is_inserted = IRNameTable_Insert(ir->global_nt,
+                                   buf_for_str_gen,
+                                   else_br_label_len,
+                                   else_br_label_id,
+                                   kIROperandType_LabelName,
+                                   0);
   if (!is_inserted) { ASSERT(0 && ":("); }
 
   ListNode* jmp_if_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, not_cond_lnode);
@@ -487,7 +513,8 @@ static ListNode* TranslateIfBranch(TreeNode* if_br_tnode,
                                                         jmp_if_lnode,
                                                         ir);
 
-  ListNode* jmp_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, end_of_statement_lnode);
+  ListNode* jmp_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes,
+                                           end_of_statement_lnode);
   IRNode* jmp_ir_nd = List_AccessData(jmp_lnode);
   *jmp_ir_nd = (IRNode){.dest_id = exit_id,
                         .dest_type = kIROperandType_LabelName,
@@ -497,7 +524,8 @@ static ListNode* TranslateIfBranch(TreeNode* if_br_tnode,
                         .src2_id = 0,
                         .src2_type = kIROperandType_ZeroInit};
 
-  ListNode* else_br_label_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, jmp_lnode);
+  ListNode* else_br_label_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes,
+                                                     jmp_lnode);
   IRNode* else_br_label_ir_nd = List_AccessData(else_br_label_lnode);
   *else_br_label_ir_nd = (IRNode){.dest_id = else_br_label_id,
                                   .dest_type = kIROperandType_LabelName,
@@ -564,13 +592,18 @@ static ListNode* TranslateWhileLoop(TreeNode* while_loop_tnode,
 
   int64_t lbl_for_check_id = func_ir_block->last_local_id++;
   int64_t lbl_for_to_st_id = func_ir_block->last_local_id++;
-  // add to nt
-  // AddNameToLocalNT(func_ir_block->local_nt, lbl_for_check_id, "check", kIROperandType_LabelName);
-  // AddNameToLocalNT(func_ir_block->local_nt, lbl_for_to_st_id, "while_loop", kIROperandType_LabelName);
-  AddNameToLocalNT(ir->global_nt, lbl_for_check_id, "check", kIROperandType_LabelName);
-  AddNameToLocalNT(ir->global_nt, lbl_for_to_st_id, "while_loop", kIROperandType_LabelName);
 
-  ListNode* jmp_to_check_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, last_ir_node);
+  AddNameToLocalNT(ir->global_nt,
+                   lbl_for_check_id,
+                   "check",
+                   kIROperandType_LabelName);
+  AddNameToLocalNT(ir->global_nt,
+                   lbl_for_to_st_id,
+                   "while_loop",
+                   kIROperandType_LabelName);
+
+  ListNode* jmp_to_check_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes,
+                                                    last_ir_node);
   IRNode* jmp_to_check_ir_nd = List_AccessData(jmp_to_check_lnode);
   *jmp_to_check_ir_nd = (IRNode){.dest_id = lbl_for_check_id,
                                  .dest_type = kIROperandType_LabelName,
@@ -580,7 +613,8 @@ static ListNode* TranslateWhileLoop(TreeNode* while_loop_tnode,
                                  .src2_id = 0,
                                  .src2_type = kIROperandType_ZeroInit};
 
-  ListNode* lbl_for_to_st_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, jmp_to_check_lnode);
+  ListNode* lbl_for_to_st_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes,
+                                                     jmp_to_check_lnode);
   IRNode* lbl_for_to_st_ir_nd = List_AccessData(lbl_for_to_st_lnode);
   *lbl_for_to_st_ir_nd = (IRNode){.dest_id = lbl_for_to_st_id,
                                   .dest_type = kIROperandType_LabelName,
@@ -590,7 +624,8 @@ static ListNode* TranslateWhileLoop(TreeNode* while_loop_tnode,
                                   .src2_id = 0,
                                   .src2_type = kIROperandType_ZeroInit};
 
-  ListNode* lbl_for_check_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, lbl_for_to_st_lnode);
+  ListNode* lbl_for_check_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes,
+                                                     lbl_for_to_st_lnode);
   IRNode* lbl_for_check_ir_nd = List_AccessData(lbl_for_check_lnode);
   *lbl_for_check_ir_nd = (IRNode){.dest_id = lbl_for_check_id,
                                  .dest_type = kIROperandType_LabelName,
@@ -608,7 +643,8 @@ static ListNode* TranslateWhileLoop(TreeNode* while_loop_tnode,
                                     ir,
                                     &value_id);
 
-  ListNode* jmp_if_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, last_ir_node);
+  ListNode* jmp_if_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes,
+                                              last_ir_node);
   IRNode* jmp_if_ir_nd = List_AccessData(jmp_if_lnode);
   *jmp_if_ir_nd = (IRNode){.dest_id = lbl_for_to_st_id,
                            .dest_type = kIROperandType_LabelName,
@@ -666,7 +702,8 @@ static ListNode* TranslateValueItself(TreeNode* value_tnode,
                                         &id_for_right_res);
   }
 
-  ListNode* assign_ir_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, tmp_ir_lnode);
+  ListNode* assign_ir_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes,
+                                                 tmp_ir_lnode);
   IRNode* assign_ir_nd = List_AccessData(assign_ir_lnode);
   if (value_tnode->data.type == kTokenType_Identifier) {
     IRName lookup_tmp = {};
@@ -674,7 +711,7 @@ static ListNode* TranslateValueItself(TreeNode* value_tnode,
                                             value_tnode->data.idnt.str,
                                             value_tnode->data.idnt.len,
                                             &lookup_tmp);
-    if (!is_found) { $ return NULL; } // FIXME if identirier not found than return error
+    if (!is_found) { ASSERT(0 && "Unknown identifier encountered"); } // FIXME if identirier not found than return error
 
     int64_t identifier_id = lookup_tmp.name_id;
 
@@ -724,12 +761,16 @@ static ListNode* TranslateFunctionCall(TreeNode* func_call_tnode,
   int64_t func_call_id = 0;
   int64_t func_n_param_exp = 0;
   IRName func_call_ir_name = {};
-  bool is_found = IRNameTable_LookUpByStr(ir->global_nt, func_name_tnode->data.idnt.str, func_name_tnode->data.idnt.len, &func_call_ir_name);
+  bool is_found = IRNameTable_LookUpByStr(ir->global_nt,
+                                          func_name_tnode->data.idnt.str,
+                                          func_name_tnode->data.idnt.len,
+                                          &func_call_ir_name);
   if (!is_found) { ASSERT(0 && "cant find such function"); }
   func_call_id = func_call_ir_name.name_id;
   func_n_param_exp = func_call_ir_name.n_param;
 
-  ListNode* call_start_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, last_ir_node);
+  ListNode* call_start_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes,
+                                                  last_ir_node);
   IRNode* call_start_ir_nd = List_AccessData(call_start_lnode);
   *call_start_ir_nd = (IRNode){.dest_id = call_tmp_id,
                                .dest_type = kIROperandType_Variable,
@@ -751,8 +792,13 @@ static ListNode* TranslateFunctionCall(TreeNode* func_call_tnode,
 
   int64_t value_id = 0;
   while (iter_param_tnode != NULL) {
-    iter_value_lnode = TranslateValueExpr(iter_param_tnode, func_ir_block, iter_value_lnode, ir, &value_id);
-    iter_param_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, iter_param_lnode);
+    iter_value_lnode = TranslateValueExpr(iter_param_tnode,
+                                          func_ir_block,
+                                          iter_value_lnode,
+                                          ir,
+                                          &value_id);
+    iter_param_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes,
+                                          iter_param_lnode);
     IRNode* param_ir_nd = List_AccessData(iter_param_lnode);
     *param_ir_nd = (IRNode){.dest_id = func_call_id,
                             .dest_type = kIROperandType_Function,
@@ -766,7 +812,8 @@ static ListNode* TranslateFunctionCall(TreeNode* func_call_tnode,
     count_param++;
   }
 
-  ListNode* call_end_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, iter_param_lnode);
+  ListNode* call_end_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes,
+                                                iter_param_lnode);
   IRNode* call_end_ir_nd = List_AccessData(call_end_lnode);
   *call_end_ir_nd = (IRNode){.dest_id = call_tmp_id,
                              .dest_type = kIROperandType_Variable,
@@ -836,7 +883,7 @@ static ListNode* CreateTmpNode(IRBlock* func_ir_block,
   char buf_for_str_gen[kMaxCharBufSize] = {0};
 
   int64_t tmp_id = func_ir_block->last_local_id++;
-  snprintf(buf_for_str_gen, kMaxCharBufSize, "tmp%ld", tmp_id); //NOTE maybe __tmp
+  snprintf(buf_for_str_gen, kMaxCharBufSize, "tmp%ld", tmp_id); //NOTE maybe __tmp as it is reserved by the lenguage
   size_t tmp_name_len = strlen(buf_for_str_gen);
 
   bool is_inserted = IRNameTable_Insert(func_ir_block->local_nt,
@@ -847,7 +894,8 @@ static ListNode* CreateTmpNode(IRBlock* func_ir_block,
                                         0);
   if (!is_inserted) { $ ASSERT(0 && ":("); }
 
-  ListNode* new_tmp_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes, last_ir_node);
+  ListNode* new_tmp_lnode = List_CtorNodeAfter(func_ir_block->ir_nodes,
+                                               last_ir_node);
   IRNode* new_tmp_ir_nd = List_AccessData(new_tmp_lnode);
   *new_tmp_ir_nd = (IRNode){.dest_id = tmp_id,
                             .dest_type = kIROperandType_Variable,
@@ -874,7 +922,12 @@ static void AddNameToLocalNT(IRNameTable* ir_name_table,
 
   snprintf(buf_for_str_gen, kMaxCharBufSize, "%s%ld", new_name, new_id);
   size_t new_name_len = strlen(buf_for_str_gen);
-  is_inserted = IRNameTable_Insert(ir_name_table, buf_for_str_gen, new_name_len, new_id, new_ir_op_type, 0);
+  is_inserted = IRNameTable_Insert(ir_name_table,
+                                   buf_for_str_gen,
+                                   new_name_len,
+                                   new_id,
+                                   new_ir_op_type,
+                                   0);
   if (!is_inserted) { ASSERT(error && "unable to insert new name"); }
 }
 

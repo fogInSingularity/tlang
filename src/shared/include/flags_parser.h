@@ -3,7 +3,6 @@
 
 #include "compiler_runtime_conf.h"
 
-
 typedef enum FlagsParserError {
   kFlagsParserError_Ok = 0,
 } FlagsParserError;

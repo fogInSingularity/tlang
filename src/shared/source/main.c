@@ -8,7 +8,7 @@ int main(const int argc, char* const* argv) {
   CompilerRuntimeConfig config = {0};
   ParseFlagsAndConfigure(argc, argv, &config);
 
-  IR* ir = IR_Ctor(config.output_ir, config.ir_out_filename); //FIXME
+  IR* ir = IR_Ctor(config.output_ir, config.ir_out_filename);
 
   if (config.do_front_pass) {
     FrontendError error = kFrontendError_Success;

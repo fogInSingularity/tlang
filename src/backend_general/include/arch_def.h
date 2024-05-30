@@ -1,9 +1,6 @@
 #ifndef ARCH_DEF_H_
 #define ARCH_DEF_H_
 
-// i try to write my own compiler in C and now writing backend for it
-// i have few target architectures and have main backend that should only now about what architectures i have and what to call if one of architectures were chosen at runtime
-
 #include <stddef.h>
 
 #include "x86_64_backend.h"

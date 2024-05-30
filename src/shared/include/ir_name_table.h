@@ -31,7 +31,5 @@ bool IRNameTable_LookUpByStr(IRNameTable* name_table,
 bool IRNameTable_LookUpByValue(IRNameTable* name_table,
                                int64_t name_id,
                                IRName* ir_name_out);
-// FIXME ?
-// void IRNameTable_Remove(IRNameTable* name_table, const char* str, size_t len);
 
 #endif // IR_NAME_TABLE_H_

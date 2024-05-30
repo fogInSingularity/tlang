@@ -118,7 +118,10 @@ static void ThrowError(DArray* token_arr, Index token_index) {
 
   Token* new_token = DArray_At(token_arr, token_index);
   fprintf(stderr, "! Error encountered:\n");
-  fprintf(stderr, "!   Line: [ %lu ] Symbol: [ %lu ]\n", new_token->debug.line, new_token->debug.symbol);
+  fprintf(stderr,
+          "!   Line: [ %lu ] Symbol: [ %lu ]\n",
+          new_token->debug.line,
+          new_token->debug.symbol);
 }
 
 static void GetGrammar(DArray* token_arr, Tree* ast_tree) {
