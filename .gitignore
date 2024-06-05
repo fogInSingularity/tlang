@@ -25,3 +25,4 @@ src/lib_code/build/
 src/shared/build/
 src/x86_64_backend/build/
 src/backend_general/build/
+src/middleend/build/
