@@ -1,6 +1,6 @@
 # sep_str = "# ------------------------------------------------------------------------------\n"
 
-clean_cmd = "rm src/frontend/build/* src/lib_code/build/* src/shared/build/* src/backend_general/build/* src/x86_64_backend/build/*"
+clean_cmd = "rm src/frontend/build/* src/lib_code/build/* src/shared/build/* src/backend_general/build/* src/x86_64_backend/build/* src/middleend/build/*"
 
 main_make_str = """
 AST_DOT_FILE ?= dump_tree.dot
