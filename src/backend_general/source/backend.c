@@ -14,7 +14,7 @@ static TargetArchitectureId ParseTargetArchitecture(Backend* backend,
 
 // global ----------------------------------------------------------------------
 
-BackendError BackendCtor(Backend* backend, const CompilerRuntimeConfig* config) {
+BackendError Backend_Ctor(Backend* backend, const CompilerRuntimeConfig* config) {
   ASSERT(backend != NULL);
   ASSERT(config != NULL);
 
@@ -35,7 +35,7 @@ BackendError BackendCtor(Backend* backend, const CompilerRuntimeConfig* config) 
   return kBackendError_Success;
 }
 
-void BackendDtor(Backend* backend) {
+void Backend_Dtor(Backend* backend) {
   ASSERT(backend != NULL);
 
   backend->asm_out_filename = NULL;
@@ -44,7 +44,7 @@ void BackendDtor(Backend* backend) {
   backend->is_valid = false;
 }
 
-void BackendThrowError(BackendError error) {
+void Backend_ThrowError(BackendError error) {
   switch (error) {
     case kBackendError_Success:
       PRINT_STR(STRINGIFY(kBackendError_Success));
@@ -58,7 +58,7 @@ void BackendThrowError(BackendError error) {
   }
 }
 
-BackendError BackendRun(Backend* backend, IR* ir) {
+BackendError Backend_Pass(Backend* backend, IR* ir) {
   if (backend->TranslateFromIRToTarget == NULL) { ASSERT(0 && "unsupported"); }
   return backend->TranslateFromIRToTarget(backend, ir);
 }

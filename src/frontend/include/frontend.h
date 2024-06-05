@@ -29,10 +29,10 @@ typedef enum {
   kFrontendError_InvalidFront       = 6,
 } FrontendError;
 
-FrontendError FrontendCtor(Frontend* front, const CompilerRuntimeConfig* config);
-void FrontendDtor(Frontend* front);
-void FrontendThrowError(FrontendError error);
+FrontendError Frontend_Ctor(Frontend* front, const CompilerRuntimeConfig* config);
+void Frontend_Dtor(Frontend* front);
+void Frontend_ThrowError(FrontendError error);
 
-FrontendError FrontendPass(Frontend* front, IR* ir);
+FrontendError Frontend_Pass(Frontend* front, IR* ir);
 
 #endif // FRONTEND_H_

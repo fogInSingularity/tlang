@@ -11,7 +11,7 @@
 
 //global-----------------------------------------------------------------------
 
-FrontendError FrontendCtor(Frontend* front, const CompilerRuntimeConfig* config) {
+FrontendError Frontend_Ctor(Frontend* front, const CompilerRuntimeConfig* config) {
   ASSERT(front != NULL);
   ASSERT(config != NULL);
 
@@ -36,7 +36,7 @@ FrontendError FrontendCtor(Frontend* front, const CompilerRuntimeConfig* config)
   return kFrontendError_Success;
 }
 
-void FrontendDtor(Frontend* front) {
+void Frontend_Dtor(Frontend* front) {
   ASSERT(front != NULL);
 
   FreeData(&front->source_data);
@@ -46,7 +46,7 @@ void FrontendDtor(Frontend* front) {
   front->is_valid = false;
 }
 
-void FrontendThrowError(FrontendError error) {
+void Frontend_ThrowError(FrontendError error) {
   switch (error) { // FIXME
     case kFrontendError_Success:
       /* ok */
@@ -75,7 +75,7 @@ void FrontendThrowError(FrontendError error) {
   }
 }
 
-FrontendError FrontendPass(Frontend* front, IR* ir) {
+FrontendError Frontend_Pass(Frontend* front, IR* ir) {
   ASSERT(front != NULL);
 
   if (!front->is_valid) { return kFrontendError_InvalidFront; }

@@ -21,10 +21,10 @@ typedef struct Backend {
   const char* asm_out_filename;
 } Backend;
 
-BackendError BackendCtor(Backend* backend, const CompilerRuntimeConfig* config);
-void BackendDtor(Backend* backend);
-void BackendThrowError(BackendError error);
+BackendError Backend_Ctor(Backend* backend, const CompilerRuntimeConfig* config);
+void Backend_Dtor(Backend* backend);
+void Backend_ThrowError(BackendError error);
 
-BackendError BackendRun(Backend* backend, IR* ir);
+BackendError Backend_Pass(Backend* backend, IR* ir);
 
 #endif // BACKED_H_

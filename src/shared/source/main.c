@@ -2,6 +2,7 @@
 #include "flags_parser.h"
 #include "tlang_ir.h"
 #include "frontend.h"
+#include "middleend.h"
 #include "backend.h"
 
 int main(const int argc, char* const* argv) {
@@ -14,30 +15,42 @@ int main(const int argc, char* const* argv) {
     FrontendError error = kFrontendError_Success;
     Frontend front = {};
 
-    error = FrontendCtor(&front, &config);
+    error = Frontend_Ctor(&front, &config);
 
     if (error == kFrontendError_Success) {
-      error = FrontendPass(&front, ir);
+      error = Frontend_Pass(&front, ir);
     }
 
-    FrontendThrowError(error);
-    FrontendDtor(&front);
+    Frontend_ThrowError(error);
+    Frontend_Dtor(&front);
   }
 
-  if (config.do_middle_pass) {}
+  if (config.do_middle_pass) {
+    MiddleendError error = kMiddleendError_Success;
+    Middleend middle = {};
+
+    error = Middleend_Ctor(&middle, &config);
+
+    if (error == kMiddleendError_Success) {
+      error = Middleend_Pass(&middle, ir);
+    }
+
+    Middleend_ThrowError(error);
+    Middleend_Dtor(&middle);
+  }
 
   if (config.do_back_pass) {
     BackendError error = kBackendError_Success;
     Backend backend = {};
 
-    error = BackendCtor(&backend, &config);
+    error = Backend_Ctor(&backend, &config);
 
     if (error == kBackendError_Success) {
-      error = BackendRun(&backend, ir);
+      error = Backend_Pass(&backend, ir);
     }
 
-    BackendThrowError(error);
-    BackendDtor(&backend);
+    Backend_ThrowError(error);
+    Backend_Dtor(&backend);
   }
 
   IR_Out(ir);
