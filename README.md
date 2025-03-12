@@ -68,24 +68,7 @@ AST этой функции:
 
 ## Сборка компилятора
 
-Для генерации makefile
 ```bash
-python make_make.py
-```
-
-После
-
-Для сборки debug версии
-```bash
-make debug
-```
-
-Для сборки release версии
-```bash
-make release
-```
-
-Для очистки .o файлов
-```bash
-make clean
+cmake -B build -S .
+cmake --build build --parallel `nproc`
 ```
