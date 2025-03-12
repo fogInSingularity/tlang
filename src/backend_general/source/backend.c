@@ -1,6 +1,7 @@
 #include "backend.h"
 
 #include <stddef.h>
+#include <stdint.h>
 #include <string.h>
 
 #include "my_assert.h"
@@ -9,8 +10,8 @@
 
 // static ----------------------------------------------------------------------
 
-static TargetArchitectureId ParseTargetArchitecture(Backend* backend,
-                                                    const char* target_architecture_name);
+static int64_t ParseTargetArchitecture(Backend* backend,
+                                      const char* target_architecture_name);
 
 // global ----------------------------------------------------------------------
 
@@ -26,7 +27,7 @@ BackendError Backend_Ctor(Backend* backend, const CompilerRuntimeConfig* config)
   backend->elf_filename = config->elf_filename;
 
   backend->target_architecture = ParseTargetArchitecture(backend, config->target_architecture);
-  if (backend->target_architecture == kTargetArchitecture_Unknown) {
+  if (backend->target_architecture < 0) {
     return kBackendError_UnknownArchitecture;
   }
 
@@ -58,6 +59,15 @@ void Backend_ThrowError(BackendError error) {
   }
 }
 
+void Backend_AddTarget(Backend* backend, ArchDefinition* target_arch) {
+    ASSERT(backend != NULL);
+    ASSERT(target_arch != NULL);
+
+  int64_t i_arch = 0;
+  for (; backend->arch_list[i_arch].arch_name != NULL; i_arch++) {}
+  backend->arch_list[i_arch] = *target_arch;
+}
+
 BackendError Backend_Pass(Backend* backend, IR* ir) {
   if (backend->TranslateFromIRToTarget == NULL) { ASSERT(0 && "unsupported"); }
   return backend->TranslateFromIRToTarget(backend, ir);
@@ -65,23 +75,19 @@ BackendError Backend_Pass(Backend* backend, IR* ir) {
 
 // static ----------------------------------------------------------------------
 
-static TargetArchitectureId ParseTargetArchitecture(Backend* backend,
-                                                    const char* target_architecture_name) {
+static int64_t ParseTargetArchitecture(Backend* backend,
+                                       const char* target_architecture_name) {
   ASSERT(target_architecture_name != NULL);
   ASSERT(target_architecture_name != NULL);
 
-  const ArchDefinition* arch_def = arch_list;
-  while (arch_def->arch_name != NULL) {
-    int chech_arch = strcmp(target_architecture_name, arch_def->arch_name);
+  for (int64_t i_arch = 0; backend->arch_list[i_arch].arch_name != NULL; i_arch++) {
+    int chech_arch = strcmp(target_architecture_name, backend->arch_list[i_arch].arch_name);
     if (chech_arch == 0) {
-      backend->target_architecture = arch_def->arch_id;
-      backend->TranslateFromIRToTarget = arch_def->TranslateFromIRToTarget;
+      backend->TranslateFromIRToTarget = backend->arch_list[i_arch].TranslateFromIRToTarget;
 
-      return arch_def->arch_id;
+      return i_arch;
     }
-
-    arch_def++;
   }
 
-  return kTargetArchitecture_Unknown;
+  return -1;
 }

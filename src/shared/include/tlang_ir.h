@@ -2,6 +2,7 @@
 #define TLANG_IR_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "list.h"
 #include "ir_def.h"

@@ -1,9 +1,11 @@
+#include "arch_def.h"
 #include "compiler_runtime_conf.h"
 #include "flags_parser.h"
 #include "tlang_ir.h"
 #include "frontend.h"
 #include "middleend.h"
 #include "backend.h"
+#include "x86_64_backend.h"
 
 int main(const int argc, char* const* argv) {
   CompilerRuntimeConfig config = {0};
@@ -44,6 +46,12 @@ int main(const int argc, char* const* argv) {
     Backend backend = {};
 
     error = Backend_Ctor(&backend, &config);
+
+    ArchDefinition x86_64_def = {
+        .arch_name = "x86-64",
+        .TranslateFromIRToTarget = x86_64_FromIRToTarget,
+    };
+    Backend_AddTarget(&backend, &x86_64_def);
 
     if (error == kBackendError_Success) {
       error = Backend_Pass(&backend, ir);
